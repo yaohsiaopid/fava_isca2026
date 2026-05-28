@@ -1,0 +1,24 @@
++define+ABV_ON
++define+WT_DCACHE
++define+FVT
++define+CVA6_REPO_DIR=.
++define+BLK_T_T_ARCH
++incdir+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core
++incdir+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/common/submodules/common_cells/include/
++incdir+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/common/submodules/common_cells/src/
++incdir+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/common/local/util/
++incdir+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/
+-y /cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/cv64a6_imafdc_sv39_config_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/riscv_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/corev_apu/riscv-dbg/src/dm_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/ariane_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/corev_apu/axi/src/axi_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/corev_apu/fpga-support/rtl/SyncSpRamBeNx64.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/ariane_rvfi_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/ariane_axi_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/wt_cache_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/std_cache_pkg.sv
+/cafe/u/samanthaarcher/synthlc_tutorial/SynthLC_optimized/cva6/core/include/axi_intf.sv
+./src_ift_2flag/13_ord_sram_2flags.sv
+./src_ift_2flag/cellift_hier_rewrite_2flags_d.sv
