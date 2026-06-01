@@ -27,11 +27,9 @@ with open(HEADERTCL, "r") as f:
 
 cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
-edge = get_array("../../xGenPerfLocDfgDiv/dfg_e.txt")
-reachable_sets = get_array("../xPerfLocSubsetDiv/reachable_set.txt", arr_as_ele = True, exit_on_fail=False)
+edge = get_array("../../xGenPerfLocDfg/dfg_e.txt")
 
 print("edges: ", len(edge))
-print("reachable_sets: ", len(reachable_sets))
 print("cv_perflocs: ", len(cv_perflocs))
 
 
@@ -48,21 +46,17 @@ def gen():
     tcl_out = f"{JOB}.tcl"
 
     for idx, e in enumerate(edge):
-        in_aset = False
+        add_edge = False
         e0 = e[0]
         e1 = e[1]
  
-        #for aSet in reachable_sets:
-            #if e0 in aSet and e1 in aSet and e0 != e1:
         if e0 in cv_perflocs and e1 in cv_perflocs and e0 != e1:
-        #if e0 in cv_perflocs and e1 in cv_perflocs: 
-           in_aset = True
+           add_edge = True
         
-        if in_aset: 
+        if add_edge: 
             htcl_ += A_HB_1_CYCLE_B_t_tcl.format(s1 = e0, s2 = e1, prefix=prefix)
-            #htcl_ += A_CONCUR_B_t_tcl.format(s1 = e0, s2 = e1, prefix=prefix)
         else:
-            print("not in reachable_sets: ", e)
+            print("did not add edge: ", e)
 
 
     for pl in cv_perflocs:
@@ -93,16 +87,14 @@ def pp():
     undetermined_hb = []
 
     for idx, e in enumerate(edge):
-        in_aset = False
+        add_edge = False
         e0 = e[0]
         e1 = e[1]
 
-        #for aSet in reachable_sets:
-            #if e0 in aSet and e1 in aSet and e0 != e1:
         if e0 in cv_perflocs and e1 in cv_perflocs and e0 != e1:
-           in_aset = True
+           add_edge = True
         
-        if not in_aset:
+        if not add_edge:
             continue
         
         TMPLT="cvr_{s1}_HB_1_cyc_{s2}"

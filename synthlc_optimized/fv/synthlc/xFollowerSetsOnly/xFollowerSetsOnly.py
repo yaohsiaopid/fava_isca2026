@@ -66,10 +66,8 @@ with open(HEADERTCL, "r") as f:
 
 cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
-#edge = get_array("../../xGenPerfLocDfgDiv/dfg_e.txt")
 edge = get_array("../xCoverCandidateHBEdges/hb_covered.txt")
 concur = get_array("../xCoverCandidateHBEdges/concur_covered.txt")
-reachable_sets = get_array("../xPerfLocSubsetDiv/reachable_set.txt", arr_as_ele = True, exit_on_fail=False)
 
 print("edges: ", len(edge))
 print("cv_perflocs: ", len(cv_perflocs))

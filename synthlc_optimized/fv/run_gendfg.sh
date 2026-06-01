@@ -12,7 +12,7 @@ then
     cp expected_output/dfg_e.txt .
 else
     JOB=get_dfg
-    DIR=synthlc/xGenPerfLocDfgDiv
+    DIR=synthlc/xGenPerfLocDfg
     SVFILE=$(realpath ${CWD}/${DIR}/${JOB}".sv")
     TCLFILE=$(realpath ${CWD}/${DIR}/${JOB}".tcl")
     
@@ -23,7 +23,7 @@ else
     # Run Jasper
     cd ${CWD}
     #./run.sh ${FV_UNITDIR} ${TCLFILE} ${SVFILE}
-    ./RUN_JG.sh -j synthlc/xGenPerfLocDfgDiv -s ${SVFILE} -t ${TCLFILE} -g 1
+    ./RUN_JG.sh -j ${DIR} -s ${SVFILE} -t ${TCLFILE} -g 1
 
     # Post process results 
     cd ${CWD}/${DIR}
