@@ -43,7 +43,6 @@ filename=$(basename $fnm)
 fileprefix="${filename%.*}"
 
 INAME="i_${fileprefix}_out" 
-echo "${fnm}"
 
 if [ -d "$INAME" ]; then 
     echo "Directory exists $INAME. Remove [y/n]"
@@ -65,15 +64,10 @@ cat $INSTN
 echo "==============================="
 
 
-echo ${PWD}
-echo ${PWD_PREFIX}
-
-
-
 # Shared by all instructions 
-#if [ ! -f "xGenPerfLocDfgDiv/dfg_e.txt" ]; then
-#    exit
-#fi 
+if [ ! -f "xGenPerfLocDfg/dfg_e.txt" ]; then
+    exit
+fi 
 echo "========== DFG E prepared ========== "
 
 FV_UNITDIR=$(realpath ../../..)

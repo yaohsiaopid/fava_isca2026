@@ -43,9 +43,7 @@ filename=$(basename $fnm)
 fileprefix="${filename%.*}"
 
 INAME="i_${fileprefix}_out" 
-echo "${fnm}"
 
-echo "Working on $INAME"
 
 INSTN="$INSTNDIR/$fnm"
 echo "=========== INSTN ============="
@@ -55,12 +53,9 @@ cat $INSTN
 echo "==============================="
 
 
-echo ${PWD}
-echo ${PWD_PREFIX}
-
 
 # Shared by all instructions 
-if [ ! -f "xGenPerfLocDfgDiv/dfg_e.txt" ]; then
+if [ ! -f "xGenPerfLocDfg/dfg_e.txt" ]; then
     exit
 fi 
 echo "========== DFG E prepared ========== "

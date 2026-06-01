@@ -1,3 +1,4 @@
+import copy
 import ast
 import json
 import re
@@ -29,7 +30,7 @@ htcl_ = ""
 #with open(HEADERTCL, "r") as f:
 #    for line in f:
 #        htcl_ += line
-
+htcl_ = ""
 cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 
@@ -88,7 +89,7 @@ with open("../xFollowerSetsOnly/decisions.txt", 'r') as file:
             list_str = '[' + value_part
             decisions[key] = ast.literal_eval(list_str)
 
-print(decisions)
+#print(decisions)
 
 
 pl_signals = {}
@@ -146,7 +147,7 @@ cover -name {{{tnm}_src_{s}_dest_{d}}} {{@(posedge clk_i) ({src} && i1_in_some_p
 
 def gen():
     global htcl_
-    
+   
     outstring = dynamic_template_no_props
 
     i0_constraint = ""
@@ -179,62 +180,66 @@ def gen():
         for tt in rep_pairs:
             outstring = outstring.replace(tt[0], tt[1])
 
-        with open (f"{JOB}_group{group_id}.sv", "w") as f:
+        sv_file = f"{JOB}_group{group_id}.sv"
+        print(f"Writing SV: {sv_file}")
+        with open (sv_file, "w") as f:
             f.write(h_)
             f.write(outstring)
             f.write(e_)
-
-    all_dest_pls = set()
-    for s, dest_set_list in decisions.items():
+ 
         all_dest_pls = set()
-        for dest_set in dest_set_list:
-            for dest in dest_set:
-                all_dest_pls.add(dest)
-
-        cnt = 0
-        for dest_set in dest_set_list:
-            added_t0_sigs = list()
-            in_dest = ""
-            if len(dest_set) == 0:
-                for dest in all_dest_pls:
-                    # Use the individual CellIFT shadow signals that compose this
-                    # PL's taint wire, so we don't need the wire to be in scope.
-                    #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
-                    t0_sig = prefix + dest + "_t0"
-                    if t0_sig not in added_t0_sigs:
-                        added_t0_sigs.append(t0_sig)
-                    in_dest += f"!{prefix+dest} && "
-            else:
-                for dest in all_dest_pls:
-                    if dest in dest_set:
-                        in_dest += f"{prefix+dest} && "
+        for s, dest_set_list in decisions.items():
+            for dest_set in dest_set_list:
+                for dest in dest_set:
+                    all_dest_pls.add(dest)
+     
+        for s, dest_set_list in decisions.items():
+            cnt = 0
+            for dest_set in dest_set_list:
+                added_t0_sigs = list()
+                in_dest = ""
+                if len(dest_set) == 0:
+                    for dest in all_dest_pls:
                         # Use the individual CellIFT shadow signals that compose this
                         # PL's taint wire, so we don't need the wire to be in scope.
                         #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
-                        t0_sig = prefix + dest + "_t0"    
+                        t0_sig = prefix + dest + "_t0"
                         if t0_sig not in added_t0_sigs:
                             added_t0_sigs.append(t0_sig)
-                    else:
                         in_dest += f"!{prefix+dest} && "
-            
-            in_dest += "1'b1"
-            if added_t0_sigs:
-                htcl_ += PROP_TMPLT2.format(
-                    tnm=taint,
-                    s=s,
-                    d=cnt,
-                    src=prefix + s,
-                    in_dest=in_dest,
-                    t0_sigs=", ".join(added_t0_sigs)
-                )
-            cnt += 1
-    
-    with open (f"{JOB}.tcl", "w") as f:
-        f.write(htcl_)
-        #f.write("\nprove -task mytask\n")
-        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
-        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
-        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+                else:
+                    for dest in all_dest_pls:
+                        if dest in dest_set:
+                            in_dest += f"{prefix+dest} && "
+                            # Use the individual CellIFT shadow signals that compose this
+                            # PL's taint wire, so we don't need the wire to be in scope.
+                            #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                            t0_sig = prefix + dest + "_t0"    
+                            if t0_sig not in added_t0_sigs:
+                                added_t0_sigs.append(t0_sig)
+                        else:
+                            in_dest += f"!{prefix+dest} && "
+		
+                in_dest += "1'b1"
+                if added_t0_sigs:
+                    htcl_ += PROP_TMPLT2.format(
+                        tnm=taint,
+                        s=s,
+                        d=cnt,
+                        src=prefix + s,
+                        in_dest=in_dest,
+                        t0_sigs=", ".join(added_t0_sigs)
+                    )
+                cnt += 1
+   
+        tcl_file = f"{JOB}_group{group_id}.tcl"
+        print(f"Writing TCL: {tcl_file}")
+        with open (f"{tcl_file}", "w") as f:
+            f.write(htcl_)
+            #f.write("\nprove -task mytask\n")
+            #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
+            #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+            #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
 
     return
 
@@ -251,7 +256,9 @@ def gen_per_field(taint):
             i0_constraint += line
 
     for agroup in group_items:
+        htcl_local = copy.deepcopy(htcl_)
         group_id, field, t_instns = agroup
+        print(agroup)
         if field == "" :
             continue
         if field == "rs1":
@@ -287,63 +294,67 @@ def gen_per_field(taint):
         for tt in rep_pairs:
             outstring = outstring.replace(tt[0], tt[1])
 
-        with open (f"{JOB}_group{group_id}.sv", "w") as f:
+        sv_file = f"{JOB}_group{group_id}.sv"
+        print(f"Writing SV: {sv_file}")
+        with open (sv_file, "w") as f:
             f.write(h_)
             f.write(outstring)
             f.write(e_)
 
-    all_dest_pls = set()
-    for s, dest_set_list in decisions.items():
         all_dest_pls = set()
-        for dest_set in dest_set_list:
-            for dest in dest_set:
-                all_dest_pls.add(dest)
+        for s, dest_set_list in decisions.items():
+            for dest_set in dest_set_list:
+                for dest in dest_set:
+                    all_dest_pls.add(dest)
 
-        cnt = 0
-        for dest_set in dest_set_list:
-            added_t0_sigs = list()
-            in_dest = ""
-            if len(dest_set) == 0:
-                for dest in all_dest_pls:
-                    # Use the individual CellIFT shadow signals that compose this
-                    # PL's taint wire, so we don't need the wire to be in scope.
-                    #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
-                    t0_sig = prefix + dest + "_t0"
-                    if t0_sig not in added_t0_sigs:
-                        added_t0_sigs.append(t0_sig)
-                    in_dest += f"!{prefix+dest} && "
-            else:
-                for dest in all_dest_pls:
-                    if dest in dest_set:
-                        in_dest += f"{prefix+dest} && "
+        for s, dest_set_list in decisions.items():
+            cnt = 0
+            for dest_set in dest_set_list:
+                added_t0_sigs = list()
+                in_dest = ""
+                if len(dest_set) == 0:
+                    for dest in all_dest_pls:
                         # Use the individual CellIFT shadow signals that compose this
                         # PL's taint wire, so we don't need the wire to be in scope.
                         #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
                         t0_sig = prefix + dest + "_t0"
                         if t0_sig not in added_t0_sigs:
                             added_t0_sigs.append(t0_sig)
-                    else:
                         in_dest += f"!{prefix+dest} && "
+                else:
+                    for dest in all_dest_pls:
+                        if dest in dest_set:
+                            in_dest += f"{prefix+dest} && "
+                            # Use the individual CellIFT shadow signals that compose this
+                            # PL's taint wire, so we don't need the wire to be in scope.
+                            #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                            t0_sig = prefix + dest + "_t0"
+                            if t0_sig not in added_t0_sigs:
+                                added_t0_sigs.append(t0_sig)
+                        else:
+                            in_dest += f"!{prefix+dest} && "
+    
+                in_dest += "1'b1"           
+                res, bnd, time = df_query(df, f"{taint_prev}_src_{s}_dest_{cnt}",cover_prop=True, exact_name=True)
+                if (res == "covered") and added_t0_sigs:
+                    htcl_local += PROP_TMPLT2.format(
+                        tnm=taint,
+                        s=s,
+                        d=cnt,
+                        src=prefix + s,
+                        in_dest=in_dest,
+                        t0_sigs=", ".join(added_t0_sigs)
+                    )
+                cnt += 1
 
-            in_dest += "1'b1"           
-            res, bnd, time = df_query(df, f"{taint_prev}_src_{s}_dest_{cnt}")
-            if (res == "covered") and added_t0_sigs:
-                htcl_ += PROP_TMPLT2.format(
-                    tnm=taint,
-                    s=s,
-                    d=cnt,
-                    src=prefix + s,
-                    in_dest=in_dest,
-                    t0_sigs=", ".join(added_t0_sigs)
-                )
-            cnt += 1
-
-    with open (f"{JOB}.tcl", "w") as f:
-        f.write(htcl_)
-        #f.write("\nprove -task mytask\n")
-        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")
-        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
-        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+        tcl_file = f"{JOB}_group{group_id}.tcl"
+        print(f"Writing TCL: {tcl_file}")
+        with open (tcl_file, "w") as f:
+            f.write(htcl_local)
+            #f.write("\nprove -task mytask\n")
+            #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")
+            #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+            #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
 
     return
 

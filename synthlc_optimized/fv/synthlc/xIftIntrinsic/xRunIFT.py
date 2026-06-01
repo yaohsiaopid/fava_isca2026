@@ -123,7 +123,7 @@ def gen():
 
     DEFINEOPTAINT="`define BOTHRS"
     taint = "taint_both_rs1_rs2"
-    print('->', instn_to_field[instn])
+    print(instn, '->', instn_to_field[instn])
     if len(instn_to_field[instn]) == 1:
         taint = "taint_rs1"
         DEFINEOPTAINT="`define RS1"
@@ -191,11 +191,16 @@ def gen():
     for tt in rep_pairs:
         outstring = outstring.replace(tt[0], tt[1])
 
-    with open (f"{JOB}.sv", "w") as f:
+    sv_file = f"{JOB}.sv"
+    print(f"Writing SV: {sv_file}")
+    with open (sv_file, "w") as f:
         f.write(h_)
         f.write(outstring) 
         f.write(e_)
-    with open (f"{JOB}.tcl", "w") as f:
+
+    tcl_file = f"{JOB}.tcl"
+    print(f"Writing TCL: {tcl_file}")
+    with open (tcl_file, "w") as f:
         f.write(htcl_)
         #f.write("\nprove -task mytask\n")
         #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
@@ -209,7 +214,7 @@ def gen_per_field(taint):
 
     global htcl_
 
-    print('->', instn_to_field[instn])
+    print(instn, '->', instn_to_field[instn])
     JOB_both = "ift_intr_rtl2mupath_taint_both_rs1_rs2"
     taint_both  = "taint_both_rs1_rs2"
     if len(instn_to_field[instn]) < 2:
@@ -286,11 +291,16 @@ def gen_per_field(taint):
     for tt in rep_pairs:
         outstring = outstring.replace(tt[0], tt[1])
 
-    with open (f"{JOB}.sv", "w") as f:
+    sv_file = f"{JOB}.sv"
+    print(f"Writing SV: {sv_file}")
+    with open (sv_file, "w") as f:
         f.write(h_)
         f.write(outstring)
         f.write(e_)
-    with open (f"{JOB}.tcl", "w") as f:
+
+    tcl_file = f"{JOB}.tcl"
+    print(f"Writing TCL: {tcl_file}")
+    with open (tcl_file, "w") as f:
         f.write(htcl_)
         #f.write("\nprove -task mytask\n")
         #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")

@@ -43,11 +43,9 @@ filename=$(basename $fnm)
 fileprefix="${filename%.*}"
 
 INAME="i_${fileprefix}_out" 
-echo "${fnm}"
 
 cp $INSTNDIR/$fnm "${INAME}/idef.sv"
 
-echo "Working on $INAME"
 
 INSTN="$INSTNDIR/$fnm"
 echo "=========== INSTN ============="
@@ -56,13 +54,8 @@ echo "- Instruction file: $INSTN"
 cat $INSTN
 echo "==============================="
 
-
-echo ${PWD}
-echo ${PWD_PREFIX}
-
-
 # Shared by all instructions 
-if [ ! -f "xGenPerfLocDfgDiv/dfg_e.txt" ]; then
+if [ ! -f "xGenPerfLocDfg/dfg_e.txt" ]; then
     exit
 fi 
 echo "========== DFG E prepared ========== "
@@ -115,13 +108,14 @@ if [ $confirmed == "y" ]; then
 
     # Taint RS1 only
     JOB="ift_dyn_rtl2mupath_taint_rs1"
-    TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+    #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
 
     # Generate SV and TCL for HB properties
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs1; cd ../../..
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs1; cd ../../..
 
     # Loop over every .sv file found in the directory and run Jasper
     for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+        TCLFILE="${SVFILE%.sv}.tcl"
 
         echo "=== Running job: ${JOB} ==="
         echo "    SV file:  ${SVFILE}"
@@ -135,13 +129,14 @@ if [ $confirmed == "y" ]; then
 
     # Taint RS2 only
     JOB="ift_dyn_rtl2mupath_taint_rs2"
-    TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+    #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
 
     # Generate SV and TCL for HB properties
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs2; cd ../../..
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
     
     # Loop over every .sv file found in the directory and run Jasper
     for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+        TCLFILE="${SVFILE%.sv}.tcl"
 
         echo "=== Running job: ${JOB} ==="
         echo "    SV file:  ${SVFILE}"

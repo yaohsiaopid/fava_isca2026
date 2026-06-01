@@ -43,11 +43,9 @@ filename=$(basename $fnm)
 fileprefix="${filename%.*}"
 
 INAME="i_${fileprefix}_out" 
-echo "${fnm}"
 
 cp $INSTNDIR/$fnm "${INAME}/idef.sv"
 
-echo "Working on $INAME"
 
 INSTN="$INSTNDIR/$fnm"
 echo "=========== INSTN ============="
@@ -57,12 +55,10 @@ cat $INSTN
 echo "==============================="
 
 
-echo ${PWD}
-echo ${PWD_PREFIX}
 
 
 # Shared by all instructions 
-if [ ! -f "xGenPerfLocDfgDiv/dfg_e.txt" ]; then
+if [ ! -f "xGenPerfLocDfg/dfg_e.txt" ]; then
     exit
 fi 
 echo "========== DFG E prepared ========== "
@@ -115,13 +111,13 @@ if [ $confirmed == "y" ]; then
     fi
 
     # Taint RS1 only
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs1; cd ../../..
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs1; cd ../../..
     if [[ -f "$SVFILE1" ]]; then
         ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE1} -s ${SVFILE1} -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv -p src_ift/common_header.sv -g ${gui}
     fi
 
     # Taint RS2 only
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs2; cd ../../..
+e   cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
     if [[ -f "$SVFILE2" ]]; then
         ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE2} -s ${SVFILE2} -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv -p src_ift/common_header.sv -g ${gui}
     fi
