@@ -8,8 +8,8 @@ else
     fnm="$1"
 fi
 
-./step1_run_instn.sh $fnm
-./step2_run_instn.sh $fnm
-./step3_run_instn.sh $fnm
-./step4_run_instn.sh $fnm
-./step5_run_instn.sh $fnm
+./step1_run_instn.sh -i $fnm
+./step2_run_instn.sh -i $fnm
+./step3_run_instn.sh -i $fnm
+./step4_run_instn.sh -i $fnm
+./step5_run_instn.sh -i $fnm

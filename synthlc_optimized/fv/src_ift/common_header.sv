@@ -478,34 +478,19 @@ I0_T1_BOTH: assume property (@(posedge clk_i)
 `endif
 `ifdef RS1
 I0_T0: assume property (@(posedge clk_i) 
-    read_op_i |-> 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[0]_t0 == {64{1'b1}} 
-    issue_stage_i.i_issue_read_operands.operand_a_q_t0 == {64{1'b1}} 
-    );
+    read_op_i |-> issue_stage_i.i_issue_read_operands.operand_a_q_t0 == {64{1'b1}});
 I0_T1: assume property (@(posedge clk_i) 
-    !read_op_i |-> 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[0]_t0 == {64{1'b0}} 
-    issue_stage_i.i_issue_read_operands.operand_a_q_t0 == {64{1'b0}} 
-    );
+    !read_op_i |-> issue_stage_i.i_issue_read_operands.operand_a_q_t0 == {64{1'b0}});
 I0_T2: assume property (@(posedge clk_i) 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[1]_t0 == {64{1'b0}} );
     issue_stage_i.i_issue_read_operands.operand_b_q_t0 == {64{1'b0}});
-
 `endif
 
 `ifdef RS2
 I0_T0: assume property (@(posedge clk_i) 
-    read_op_i |-> 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[1]_t0 == {64{1'b1}} 
-    issue_stage_i.i_issue_read_operands.operand_b_q_t0 == {64{1'b1}} 
-    );
+    read_op_i |-> issue_stage_i.i_issue_read_operands.operand_b_q_t0 == {64{1'b1}});
 I0_T1: assume property (@(posedge clk_i) 
-    !read_op_i |-> 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[1]_t0 == {64{1'b0}} 
-    issue_stage_i.i_issue_read_operands.operand_b_q_t0 == {64{1'b0}} 
-    );
+    !read_op_i |-> issue_stage_i.i_issue_read_operands.operand_b_q_t0 == {64{1'b0}});
 I0_T2: assume property (@(posedge clk_i) 
-    //issue_stage_i.i_issue_read_operands.i_ariane_regfile.\rdata_o[0]_t0 == {64{1'b0}} );
     issue_stage_i.i_issue_read_operands.operand_a_q_t0 == {64{1'b0}});
 `endif
 

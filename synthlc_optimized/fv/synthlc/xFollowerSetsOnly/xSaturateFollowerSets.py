@@ -45,7 +45,7 @@ with open(HEADERTCL, "r") as f:
     for line in f:
         htcl_ += line
 
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 edge = get_array("../xCoverCandidateHBEdges/hb_covered.txt")
 
 try:

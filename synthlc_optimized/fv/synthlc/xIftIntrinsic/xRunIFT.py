@@ -24,14 +24,14 @@ h_ = ""
 e_ = ""
 
 
-HEADERTCL="../../../src_ift/jg2.tcl"
+#HEADERTCL="../../../src_ift/jg2.tcl"
 htcl_ = ""
-with open(HEADERTCL, "r") as f:
-    for line in f:
-        htcl_ += line
+#with open(HEADERTCL, "r") as f:
+#    for line in f:
+#        htcl_ += line
 
 
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 
 try:
@@ -61,7 +61,7 @@ with open("../xFollowerSetsOnly/decisions.txt", 'r') as file:
             list_str = '[' + value_part
             decisions[key] = ast.literal_eval(list_str)
 
-print(decisions)
+#print(decisions)
 
 
 pl_signals = {}
@@ -96,6 +96,20 @@ with open(COMMON_HEADER, "r") as f:
 #print(tainted_signals)
 
 
+OPFIELD="../../src/opfields.txt"
+instn_to_field = {}
+with open(OPFIELD, "r") as f:
+    for line in f:
+        line = line[:-1]
+        instn = line.split("|")[0]
+        arr = line.split("|")[1]
+        v = []
+        if arr != "": #len(line.split("|")) > 1:
+            v = line.split("|")[1].split(",")
+        instn_to_field[instn] = v
+instn = None
+
+
 PROP_TMPLT = '''\
 cover -name {{{tnm}_src_{s}_dest_{d}}} {{@(posedge clk_i) {src} ##1 (|{{{t0_sigs}, 1\'b0}})}}
 '''
@@ -104,20 +118,21 @@ PROP_TMPLT2 = '''\
 cover -name {{{tnm}_src_{s}_dest_{d}}} {{@(posedge clk_i) {src} ##1 ( {in_dest} && (|{{{t0_sigs}, 1\'b0}}))}}
 '''
 
-def gen(taint):
+def gen():
     global htcl_
 
-    if taint == "taint_both_rs1_rs2":
-        DEFINEOPTAINT="`define BOTHRS"
-    elif taint == "taint_rs1":
+    DEFINEOPTAINT="`define BOTHRS"
+    taint = "taint_both_rs1_rs2"
+    print('->', instn_to_field[instn])
+    if len(instn_to_field[instn]) == 1:
+        taint = "taint_rs1"
         DEFINEOPTAINT="`define RS1"
-    elif taint == "taint_rs2":
-        DEFINEOPTAINT="`define RS2"
+        print("==> ONLYRS1", instn)
+    elif len(instn_to_field[instn]) == 0:
+        return
     
-    JOB="ift_rtl2mupath_" + taint
+    JOB="ift_intr_rtl2mupath_" + taint
     
-    tnm = taint
-
     all_dest_pls = set()
     for s, dest_set_list in decisions.items():
         all_dest_pls = set()
@@ -154,7 +169,7 @@ def gen(taint):
             in_dest += "1'b1"
             if added_t0_sigs:
                 htcl_ += PROP_TMPLT2.format(
-                    tnm=tnm,
+                    tnm=taint,
                     s=s,
                     d=cnt,
                     src=prefix + s,
@@ -182,27 +197,124 @@ def gen(taint):
         f.write(e_)
     with open (f"{JOB}.tcl", "w") as f:
         f.write(htcl_)
-        f.write("\nprove -task mytask\n")
-        f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
-        f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
-        f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+        #f.write("\nprove -task mytask\n")
+        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
+        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
 
     return
 
+
+def gen_per_field(taint):
+
+    global htcl_
+
+    print('->', instn_to_field[instn])
+    JOB_both = "ift_intr_rtl2mupath_taint_both_rs1_rs2"
+    taint_both  = "taint_both_rs1_rs2"
+    if len(instn_to_field[instn]) < 2:
+        return
+    else:
+        if taint == "taint_rs1":
+            DEFINEOPTAINT="`define RS1"
+        elif taint == "taint_rs2":
+            DEFINEOPTAINT="`define RS2"
+        else:
+            print("invalid taint")
+            return
+
+    JOB="ift_intr_rtl2mupath_" + taint
+
+    df = pd.read_csv(f"{os.getcwd()}+{JOB}", dtype=mydtypes)
+    all_dest_pls = set()
+    for s, dest_set_list in decisions.items():
+        all_dest_pls = set()
+        for dest_set in dest_set_list:
+            for dest in dest_set:
+                all_dest_pls.add(dest)
+
+        cnt = 0
+        for dest_set in dest_set_list:
+            added_t0_sigs = list()
+            in_dest = ""
+            if len(dest_set) == 0:
+                for dest in all_dest_pls:
+                    # Use the individual CellIFT shadow signals that compose this
+                    # PL's taint wire, so we don't need the wire to be in scope.
+                    #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                    t0_sig = prefix + dest + "_t0"
+                    if t0_sig not in added_t0_sigs:
+                        added_t0_sigs.append(t0_sig)
+                    in_dest += f"!{prefix+dest} && "
+            else:
+                for dest in all_dest_pls:
+                    if dest in dest_set:
+                        in_dest += f"{prefix+dest} && "
+                        # Use the individual CellIFT shadow signals that compose this
+                        # PL's taint wire, so we don't need the wire to be in scope.
+                        #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                        t0_sig = prefix + dest + "_t0"
+                        if t0_sig not in added_t0_sigs:
+                            added_t0_sigs.append(t0_sig)
+                    else:
+                        in_dest += f"!{prefix+dest} && "
+
+
+            in_dest += "1'b1"
+            res, bnd, time = df_query(df, f"{taint_both}_src_{s}_dest_{cnt}")
+            if (res == "covered") and len(added_t0_sigs) > 0:
+                htcl_ += PROP_TMPLT2.format(
+                    tnm=taint,
+                    s=s,
+                    d=cnt,
+                    src=prefix + s,
+                    in_dest=in_dest,
+                    t0_sigs=", ".join(added_t0_sigs)
+                )
+            cnt += 1
+
+    iii = ""
+    with open("../idef.sv", "r") as idef:
+        for line in idef:
+            iii += line
+
+    outstring = itself_assume_only_template
+    rep_pairs = [
+        ("OP_TAINT", DEFINEOPTAINT),
+        ("INSTN_CONSTRAINT", iii),
+        ]
+    for tt in rep_pairs:
+        outstring = outstring.replace(tt[0], tt[1])
+
+    with open (f"{JOB}.sv", "w") as f:
+        f.write(h_)
+        f.write(outstring)
+        f.write(e_)
+    with open (f"{JOB}.tcl", "w") as f:
+        f.write(htcl_)
+        #f.write("\nprove -task mytask\n")
+        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")
+        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+
+    return
 
 def pp():
 
-
+    
     return
 
 
-if len(sys.argv) != 3:
+if len(sys.argv) != 4:
     print("gen/pp")
     exit(0)
 
 opt = sys.argv[1]
-taint = sys.argv[2]
+instn = sys.argv[2] 
+taint = sys.argv[3]
 if opt == "gen":
-    gen(taint)
+    gen()
+elif opt == "gen_per_field":
+    gen_per_field(taint)
 elif opt == "pp":
     pp()

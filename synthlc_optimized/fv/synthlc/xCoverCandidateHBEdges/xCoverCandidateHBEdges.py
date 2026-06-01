@@ -25,7 +25,7 @@ with open(HEADERTCL, "r") as f:
         htcl_ += line
 
 
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 edge = get_array("../../xGenPerfLocDfgDiv/dfg_e.txt")
 reachable_sets = get_array("../xPerfLocSubsetDiv/reachable_set.txt", arr_as_ele = True, exit_on_fail=False)
@@ -64,12 +64,16 @@ def gen():
         else:
             print("not in reachable_sets: ", e)
 
+
+    for pl in cv_perflocs:
+        htcl_ += A_HB_1_CYCLE_B_t_tcl.format(s1 = pl, s2 = pl, prefix=prefix)
+
     for pl1, pl2 in combinations(cv_perflocs, 2):
         htcl_ += A_CONCUR_B_t_tcl.format(s1 = pl1, s2 = pl2, prefix=prefix)
  
     with open (tcl_out, "w") as f:
         f.write(htcl_)
-        f.write("set_prove_time_limit 3h\nset_prove_per_property_time_limit 30m")
+        #f.write("set_prove_time_limit 3h\nset_prove_per_property_time_limit 30m")
         #f.write("set props [get_property_list -include {name cvr_*}]\n")
         #f.write("prove -property $props\n")
         #f.write("report -property $props -csv -results -file %s.csv -force\n" % JOB)
@@ -83,16 +87,10 @@ def gen():
     return
 
 def pp():
-    reachable_nodes = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+    reachable_nodes = get_array("../xCoverAPerfLoc/cover_individual.txt")
     covered_hb = []
     unreachable_hb = []
     undetermined_hb = []
-
-    covered_concur = []
-    unreachable_concur = []
-    undetermined_concur = []
-
-    covered_all = []
 
     for idx, e in enumerate(edge):
         in_aset = False
@@ -110,7 +108,6 @@ def pp():
         TMPLT="cvr_{s1}_HB_1_cyc_{s2}"
         TMPLT2="cvr_{s1}_CONCUR_{s2}"
         r_, t_, b_ = get_result(f"{JOB}.csv", TMPLT.format(s1=e0, s2=e1)) #"ariane.HB_%d" % idx)
-        r2_, t2_, b2_ = get_result(f"{JOB}.csv", TMPLT2.format(s1=e0, s2=e1)) 
         if r_ == "ERR":
             print("FAIL HB %s" % e)
         if r_ == "covered":
@@ -121,18 +118,39 @@ def pp():
             undetermined_hb.append(e)
             print("undetermined HB: ", e)
 
-        if r2_ == "ERR":
-            print("FAIL CONCUR %s" % e)
-        if r2_ == "covered":
-            covered_concur.append(e)
-        elif r2_ == "unreachable" or r2_=="bounded_unreachable_user":
-            unreachable_concur.append(e)
-        elif r2_ == "undetermined":
-            undetermined_concur.append(e)
-            print("undetermined CONCUR: ",e)
+    for pl in cv_perflocs:
+        e = (pl, pl)
+        TMPLT="cvr_{s1}_HB_1_cyc_{s2}"
+        r_, t_, b_ = get_result(f"{JOB}.csv", TMPLT.format(s1=pl, s2=pl)) #"ariane.HB_%d" % idx)
+        if r_ == "ERR":
+            print("FAIL HB %s" % e)
+        if r_ == "covered":
+            covered_hb.append(e)
+        elif r_ == "unreachable" or r_=="bounded_unreachable_user":
+            unreachable_hb.append(e)
+        elif r_ == "undetermined":
+            undetermined_hb.append(e)
+            print("undetermined HB: ", e)
 
-        if r_ == "covered" or r2_ == "covered":
-            covered_all.append(e)
+    covered_concur = []
+    unreachable_concur = []
+    undetermined_concur = []
+
+    for pl1, pl2 in combinations(cv_perflocs, 2):
+        r2_, t2_, b2_ = get_result(f"{JOB}.csv", TMPLT2.format(s1=pl1, s2=pl2))
+        
+        p = (pl1, pl2)
+
+        if r2_ == "ERR":
+            print("FAIL CONCUR %s" % p)
+        if r2_ == "covered":
+            covered_concur.append(p)
+        elif r2_ == "unreachable" or r2_=="bounded_unreachable_user":
+            unreachable_concur.append(p)
+        elif r2_ == "undetermined":
+            undetermined_concur.append(p)
+            print("undetermined CONCUR: ",p)
+
 
     with open("hb_covered.txt", "w") as f:
         for e in covered_hb:
@@ -158,11 +176,6 @@ def pp():
     with open("concur_undetermined.txt", "w") as f:
         for e in undetermined_concur:
             f.write(",".join(e) + "\n")
-
-    with open("covered_edges.txt", "w") as f:
-        for e in covered_all:
-            f.write(",".join(e) + "\n")
-
 
     return
 

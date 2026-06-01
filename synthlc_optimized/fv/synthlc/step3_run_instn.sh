@@ -10,16 +10,34 @@ PWD_PREFIX=$(basename ${PWD})
 INSTNDIR=opcodes_gen_all
 # run over all
 INSTN_FILES=$(ls $INSTNDIR)
-fnm=DIV.sv
-if [ -z $1 ];
-then
-    echo "Pass an argument such as as \`./run_an_instn_demo.sh LW.sv\`"
-    exit
-else
-    echo "===> Processing: $1"
-    fnm="$1"
-fi
 
+fnm=""
+gui="0"
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    -i|--insn)
+    fnm="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -g|--gui)
+    gui="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+
+if [[ -z "$fnm" ]]; then
+    echo "Error: -i/--insn option is required"
+    exit 1
+fi
 
 filename=$(basename $fnm)
 fileprefix="${filename%.*}"
@@ -64,11 +82,8 @@ STEP 3 at $(pwd) $(date)
 ================================================================================
 "
 
-# 1. For each reachable PL set, get revisit information for each PL for 
-# 2. For each IUV PLs, is it re-visitable and what is max cycle that it is
-# revisited 
-DIR=xPerfLocCycleCount
-PYSCRPT=xPerfLocCycleCountAllSet
+DIR=xFollowerSetsOnly
+PYSCRPT=xFollowerSetsOnly
 confirmed="y"
 if [ -d "${DIR}" ]; then
     echo "Directory exists $INAME/$DIR. Redo step? [y/n]"
@@ -76,10 +91,11 @@ if [ -d "${DIR}" ]; then
 fi
 if [ $confirmed == "y" ]; then
     cp -r ../${DIR} .
-    
-    JOB1=rtl2mupath_pl_revisit_possible
-    JOB2=rtl2mupath_pl_subset_revisit_possible
-    JOB3=rtl2mupath_pl_subset_combination_check
+
+   
+    JOB1=rtl2mupath_followers
+    JOB2=rtl2mupath_first_pls
+    JOB3=rtl2mupath_first_pl_sets
     TCLFILE1=$(realpath ${DIR})/${JOB1}.tcl
     SVFILE1=$(realpath ${DIR})/${JOB1}.sv
     TCLFILE2=$(realpath ${DIR})/${JOB2}.tcl
@@ -87,35 +103,25 @@ if [ $confirmed == "y" ]; then
     TCLFILE3=$(realpath ${DIR})/${JOB3}.tcl
     SVFILE3=$(realpath ${DIR})/${JOB3}.sv
 
+    cd ${INAME_DIR}/${DIR};
+    python3 ${PYSCRPT}.py gen; 
 
-    # Generate properties to check for repeated PLs
-    cd ${DIR}; 
-    python3 ${PYSCRPT}.py gen;
-
-    # Run Jasper to determine which PLs can be repeated in any subset
     cd ../../..
-    #./run.sh ${FV_UNITDIR} ${TCLFILE1} ${SVFILE1}
-    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE1} -t ${TCLFILE1} -g 0
+    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE1} -t ${TCLFILE1} -g ${gui}
+    cd ${INAME_DIR}/${DIR};
+    python3 ${PYSCRPT}.py gen_s2; 
 
-    # Generate properties to check for whether a PL can be repeated in a particular subset
-    #cd ${INAME_DIR}/${DIR};
-    #python3 ${PYSCRPT}.py gen_s2;
-     
-    # Run Jasper to determine if a PL can be repeated within a particular subset
-    #cd ../../..
-    #./run.sh ${FV_UNITDIR} ${TCLFILE2} ${SVFILE2}
+    cd ../../..
+    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE2} -t ${TCLFILE2} -g ${gui}
 
+    cd ${INAME_DIR}/${DIR};
+    python3 ${PYSCRPT}.py gen_s3; 
 
-    # Generate properties to check for whether combinations of PLs are revisited/not revisited in a subset
-    #cd ${INAME_DIR}/${DIR};
-    #python3 ${PYSCRPT}.py gen_s3;
+    cd ../../..
+    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE3} -t ${TCLFILE3} -g ${gui}
 
-    # Run Jasper to determine if combinations of PLs can be repeated within a particular subset
-    #cd ../../..
-    #./run.sh ${FV_UNITDIR} ${TCLFILE3} ${SVFILE3}
+    cd ${INAME_DIR}/${DIR};
+    python3 ${PYSCRPT}.py pp
 
 fi
 
-cd ${INAME_DIR}/${DIR};
-#python3 ${PYSCRPT}.py pp; 
-python3 ${PYSCRPT}.py pp_repeat_only;

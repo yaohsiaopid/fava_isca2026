@@ -64,7 +64,7 @@ with open(HEADERTCL, "r") as f:
         htcl_ += line
 
 
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 #edge = get_array("../../xGenPerfLocDfgDiv/dfg_e.txt")
 edge = get_array("../xCoverCandidateHBEdges/hb_covered.txt")
@@ -82,13 +82,13 @@ JOB1="rtl2mupath_followers"
 JOB2="rtl2mupath_first_pls"
 JOB3="rtl2mupath_first_pl_sets"
 
-max_cyc_per_pl_raw = get_array("../xPerfLocCycleCount/max_cycle_per_pl.txt")
+#max_cyc_per_pl_raw = get_array("../xPerfLocCycleCount/max_cycle_per_pl.txt")
 
-repeated_pls = list()
-for itm in max_cyc_per_pl_raw:
-    if int(itm[1]) > 1:
-        repeated_pls.append(itm[0])
-
+#repeated_pls = list()
+#for itm in max_cyc_per_pl_raw:
+#    if int(itm[1]) > 1:
+#        repeated_pls.append(itm[0])
+#
 
 def gen():
     global htcl_
@@ -96,7 +96,6 @@ def gen():
 
     followers = dict()
     for idx, e in enumerate(edge):
-        in_aset = False
         e0 = e[0]
         e1 = e[1]
         pl_followers = followers.get(e0)
@@ -105,12 +104,12 @@ def gen():
         else:
             followers[e0].append(e1)
 
-    for pl in cv_perflocs:
-        if pl in repeated_pls:
-            pl_followers = followers.get(pl)
-            if pl_followers is None:
-                followers[pl] = list()
-            followers[pl].append(pl)
+    #for pl in cv_perflocs:
+    #    if pl in repeated_pls:
+    #        pl_followers = followers.get(pl)
+    #        if pl_followers is None:
+    #            followers[pl] = list()
+    #        followers[pl].append(pl)
      
     for src, dest_set in followers.items():
         print(f"SRC: {src}")
@@ -121,7 +120,6 @@ def gen():
         fs = ""
         fs_conj = ""
         for a_comb in comb_obj.res:
-            print(a_comb)
             fs = ""
             fs_conj = ""
             nfs_disj = ""
@@ -250,12 +248,12 @@ def pp():
             followers[e0].append(e1)
 
 
-    for pl in cv_perflocs:
-        if pl in repeated_pls:
-            pl_followers = followers.get(pl)
-            if pl_followers is None:
-                followers[pl] = list()
-            followers[pl].append(pl)
+    #for pl in cv_perflocs:
+    #    if pl in repeated_pls:
+    #        pl_followers = followers.get(pl)
+    #        if pl_followers is None:
+    #            followers[pl] = list()
+    #        followers[pl].append(pl)
 
     undetermined = list()
     decisions = dict()

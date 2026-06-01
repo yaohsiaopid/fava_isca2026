@@ -24,14 +24,13 @@ h_ = ""
 e_ = ""
 
 
-HEADERTCL="../../../src_ift/jg2.tcl"
+#HEADERTCL="../../../src_ift/jg2.tcl"
 htcl_ = ""
-with open(HEADERTCL, "r") as f:
-    for line in f:
-        htcl_ += line
+#with open(HEADERTCL, "r") as f:
+#    for line in f:
+#        htcl_ += line
 
-
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 
 try:
@@ -124,6 +123,19 @@ with open(COMMON_HEADER, "r") as f:
 #print(tainted_signals)
 
 
+OPFIELD="../../src/opfields.txt"
+instn_to_field = {}
+with open(OPFIELD, "r") as f:
+    for line in f:
+        line = line[:-1]
+        instn = line.split("|")[0]
+        arr = line.split("|")[1]
+        v = []
+        if arr != "": #len(line.split("|")) > 1:
+            v = line.split("|")[1].split(",")
+        instn_to_field[instn] = v
+instn = None
+
 PROP_TMPLT = '''\
 cover -name {{{tnm}_src_{s}_dest_{d}}} {{@(posedge clk_i) {src} ##1 (|{{{t0_sigs}, 1\'b0}})}}
 '''
@@ -132,23 +144,9 @@ PROP_TMPLT2 = '''\
 cover -name {{{tnm}_src_{s}_dest_{d}}} {{@(posedge clk_i) ({src} && i1_in_some_pl) ##1 ( {in_dest} && (|{{{t0_sigs}, 1\'b0}}))}}
 '''
 
-def gen(taint):
+def gen():
     global htcl_
-
-    if taint == "taint_both_rs1_rs2":
-        DEFINEOPTAINT="`define BOTHRS"
-    elif taint == "taint_rs1":
-        DEFINEOPTAINT="`define RS1"
-    elif taint == "taint_rs2":
-        DEFINEOPTAINT="`define RS2"
-    else:
-        print("invalid taint")
-        sys.exit(0)   
- 
-    JOB="ift_dyn_rtl2mupath_" + taint
     
-    tnm = taint
-
     outstring = dynamic_template_no_props
 
     i0_constraint = ""
@@ -160,6 +158,13 @@ def gen(taint):
         group_id, field, t_instns = agroup
         if field == "" :
             continue
+        DEFINEOPTAINT="`define BOTHRS"
+        taint="taint_both_rs1_rs2"
+        if field == "rs1":
+            DEFINEOPTAINT="`define RS1"
+            taint="taint_rs1"
+
+        JOB="ift_dyn_rtl2mupath_" + taint
 
         i1_constraint = ""
         with open("%s/group_subset_%s.sv" % (BATCH_INSTNDIR, group_id), "r") as idef:
@@ -178,7 +183,6 @@ def gen(taint):
             f.write(h_)
             f.write(outstring)
             f.write(e_)
-
 
     all_dest_pls = set()
     for s, dest_set_list in decisions.items():
@@ -216,7 +220,7 @@ def gen(taint):
             in_dest += "1'b1"
             if added_t0_sigs:
                 htcl_ += PROP_TMPLT2.format(
-                    tnm=tnm,
+                    tnm=taint,
                     s=s,
                     d=cnt,
                     src=prefix + s,
@@ -227,27 +231,229 @@ def gen(taint):
     
     with open (f"{JOB}.tcl", "w") as f:
         f.write(htcl_)
-        f.write("\nprove -task mytask\n")
-        f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
-        f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
-        f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+        #f.write("\nprove -task mytask\n")
+        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
+        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
 
     return
 
 
-def pp():
 
+def gen_per_field(taint):
+    global htcl_
+
+    outstring = dynamic_template_no_props
+
+    i0_constraint = ""
+    with open("../idef.sv", "r") as idef:
+        for line in idef:
+            i0_constraint += line
+
+    for agroup in group_items:
+        group_id, field, t_instns = agroup
+        if field == "" :
+            continue
+        if field == "rs1":
+            continue
+        else:
+            if taint == "taint_rs1":
+                DEFINEOPTAINT="`define RS1"
+                taint="taint_rs1"
+            elif taint == "taint_rs2":
+                DEFINEOPTAINT="`define RS2"
+                taint="taint_rs2"
+
+        taint_prev = "taint_both_rs1_rs2"
+        JOB_prev="ift_dyn_rtl2mupath_" + taint_prev
+        JOB="ift_dyn_rtl2mupath_" + taint
+
+        csvf = f"{JOB_prev}_group{group_id}.csv"
+        if not os.path.exists(csvf):
+            print("FAIL %s not found" % csvf)
+            return
+        df = pd.read_csv(csvf, dtype=mydtypes)
+
+        i1_constraint = ""
+        with open("%s/group_subset_%s.sv" % (BATCH_INSTNDIR, group_id), "r") as idef:
+            for line in idef:
+                i1_constraint += (line.replace("i0", "i1"))
+
+        outstring = dynamic_template_no_props
+        rep_pairs = [
+            ("OP_TAINT", DEFINEOPTAINT),
+            ("INSTN_CONSTRAINT", i0_constraint),
+            ("I1_CONSTRAINT", i1_constraint)]
+        for tt in rep_pairs:
+            outstring = outstring.replace(tt[0], tt[1])
+
+        with open (f"{JOB}_group{group_id}.sv", "w") as f:
+            f.write(h_)
+            f.write(outstring)
+            f.write(e_)
+
+    all_dest_pls = set()
+    for s, dest_set_list in decisions.items():
+        all_dest_pls = set()
+        for dest_set in dest_set_list:
+            for dest in dest_set:
+                all_dest_pls.add(dest)
+
+        cnt = 0
+        for dest_set in dest_set_list:
+            added_t0_sigs = list()
+            in_dest = ""
+            if len(dest_set) == 0:
+                for dest in all_dest_pls:
+                    # Use the individual CellIFT shadow signals that compose this
+                    # PL's taint wire, so we don't need the wire to be in scope.
+                    #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                    t0_sig = prefix + dest + "_t0"
+                    if t0_sig not in added_t0_sigs:
+                        added_t0_sigs.append(t0_sig)
+                    in_dest += f"!{prefix+dest} && "
+            else:
+                for dest in all_dest_pls:
+                    if dest in dest_set:
+                        in_dest += f"{prefix+dest} && "
+                        # Use the individual CellIFT shadow signals that compose this
+                        # PL's taint wire, so we don't need the wire to be in scope.
+                        #for t0_sig in pl_t0_sigs.get(dest, [dest + "_t0"]):
+                        t0_sig = prefix + dest + "_t0"
+                        if t0_sig not in added_t0_sigs:
+                            added_t0_sigs.append(t0_sig)
+                    else:
+                        in_dest += f"!{prefix+dest} && "
+
+            in_dest += "1'b1"           
+            res, bnd, time = df_query(df, f"{taint_prev}_src_{s}_dest_{cnt}")
+            if (res == "covered") and added_t0_sigs:
+                htcl_ += PROP_TMPLT2.format(
+                    tnm=taint,
+                    s=s,
+                    d=cnt,
+                    src=prefix + s,
+                    in_dest=in_dest,
+                    t0_sigs=", ".join(added_t0_sigs)
+                )
+            cnt += 1
+
+    with open (f"{JOB}.tcl", "w") as f:
+        f.write(htcl_)
+        #f.write("\nprove -task mytask\n")
+        #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")
+        #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
+        #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
 
     return
 
 
-if len(sys.argv) != 3:
+def pp(instr):
+
+    df_map_dyn = dict()
+    df_map_intr = dict()
+
+    for agroup in group_items:
+        group_id, field, t_instns = agroup
+        df_map_intr[group_id] = dict()
+        df_map_dyn[group_id] = dict()
+        for taint in ["taint_rs1", "taint_rs2"]:
+            df_map_intr[group_id][taint]=dict()
+            df_map_dyn[group_id][taint] = dict()
+            
+            # Intrinsic
+            if t_instns == instr:
+                JOB="ift_rtl2mupath_" + taint 
+                csvf = f"../xIftIntrinsic/{JOB}.csv"
+                if not os.path.exists(csvf):
+                    for s, dest_set_list in decisions.items():
+                        df_map_intr[group_id][taint][s] = 0
+                else:
+                    df = pd.read_csv(csvf, dtype=mydtypes)
+                    for s, dest_set_list in decisions.items():
+                        df_map_intr[group_id][taint][s] = 0
+                        num_dest_sets_tainted = 0
+                        for cnt in range(len(dest_set_list)):
+                            res, bnd, time = df_query_return_on_no_exist(df, f"{taint}_src_{s}_dest_{cnt}", cover_prop=True, exact_name=True)
+                            if res is None:
+                                continue
+                            elif res == "covered":
+                                num_dest_sets_tainted += 1
+
+                        if num_dest_sets_tainted > 2:
+                            df_map_intr[group_id][taint][s] = 1
+
+            else:
+                for s, dest_set_list in decisions.items():
+                    df_map_intr[group_id][taint][s] = 0 
+
+            # Dynamic
+            JOB = "ift_dyn_rtl2mupath_" + taint + f"_group{group_id}"
+            csvf = f"{JOB}.csv"
+            if not os.path.exists(csvf):
+                for s, dest_set_list in decisions.items():
+                    df_map_dyn[group_id][taint][s] = 0
+            else:
+                df = pd.read_csv(csvf, dtype=mydtypes)
+                for s, dest_set_list in decisions.items():
+                    df_map_dyn[group_id][taint][s] = 0
+                    num_dest_sets_tainted = 0
+                    for cnt in range(len(dest_set_list)):
+                        res, bnd, time = df_query_return_on_no_exist(df, f"{taint}_src_{s}_dest_{cnt}", cover_prop=True, exact_name=True)
+                        if res is None:
+                            continue
+                        elif res == "covered":
+                            num_dest_sets_tainted += 1
+
+                    if num_dest_sets_tainted > 2:
+                        df_map_dyn[group_id][taint][s] = 1
+
+    with open("leakage_signature.txt", "w") as f:
+        N=22
+        print(" ", end="", file=f)
+        print(N * " ", end="", file=f)
+        for agroup in group_items:
+            print("{:<8}".format(agroup[2]), end="", file=f)
+        print(file=f)
+        print(N * " ", end="", file=f)
+        for agroup in group_items:
+            print((" N ") + ("  D  "), end = "", file=f)
+        print(file=f)
+        print("operand rs1/2".rjust(N, " "), end="", file=f)
+        for agroup in group_items:
+            print((" 1 2") + (" 1 2"), end = "", file=f)
+        print(file=f)
+
+        for s, _ in decisions.items():
+            print(s.ljust(N, " "), end="", file=f)
+            row = " "
+            for agroup in group_items:
+                group_id, _, _ = agroup
+                row += str(df_map_intr[group_id]["taint_rs1"][s])
+                row += " "
+
+                row += str(df_map_intr[group_id]["taint_rs1"][s])
+                row += " "
+
+                row += str(df_map_dyn[group_id]["taint_rs1"][s])
+                row += " "
+
+                row += str(df_map_dyn[group_id]["taint_rs2"][s])
+                row += " "
+            print(row.rjust(N, " "), file=f)
+    return
+
+
+if len(sys.argv) != 4:
     print("gen/pp")
     exit(0)
 
 opt = sys.argv[1]
-taint = sys.argv[2]
+instr = sys.argv[2]
+taint = sys.argv[3]
 if opt == "gen":
-    gen(taint)
+    gen()
+elif opt == "gen_per_field":
+    gen_per_field(taint)
 elif opt == "pp":
-    pp()
+    pp(instr)

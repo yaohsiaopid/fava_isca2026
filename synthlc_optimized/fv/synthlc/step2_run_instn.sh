@@ -10,16 +10,34 @@ PWD_PREFIX=$(basename ${PWD})
 INSTNDIR=opcodes_gen_all
 # run over all
 INSTN_FILES=$(ls $INSTNDIR)
-fnm=DIV.sv
-if [ -z $1 ];
-then
-    echo "Pass an argument such as as \`./run_an_instn_demo.sh LW.sv\`"
-    exit
-else
-    echo "===> Processing: $1"
-    fnm="$1"
-fi
 
+fnm=""
+gui="0"
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    -i|--insn)
+    fnm="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -g|--gui)
+    gui="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+
+if [[ -z "$fnm" ]]; then
+    echo "Error: -i/--insn option is required"
+    exit 1
+fi
 
 filename=$(basename $fnm)
 fileprefix="${filename%.*}"
@@ -82,8 +100,7 @@ if [ $confirmed == "y" ]; then
 
     # Run Jasper to get HB property results
     cd ../..
-    #./run.sh ${FV_UNITDIR} ${TCLFILE} ${SVFILE}
-    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE} -t ${TCLFILE} -g 0 
+    ./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE} -t ${TCLFILE} -g ${gui} 
 fi
 
 

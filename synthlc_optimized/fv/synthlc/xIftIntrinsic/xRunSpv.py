@@ -29,7 +29,7 @@ with open(HEADERTCL, "r") as f:
         htcl_ += line
 
 
-cv_perflocs = get_array("../xCoverAPerflocDiv/cover_individual.txt")
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
 
 
 try:

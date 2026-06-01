@@ -7,8 +7,6 @@ else
     exit
 fi
 # file path being either absolute path or relative path from this directory
-TOPFILE=./src/topsim.sv
-HEADER=""
 FVMACRO=./src/macro.sv
 
 HDLDIR=$(realpath ../core)
@@ -26,15 +24,19 @@ DESIGNDIR=$(realpath ..)
 
 Q=0
 #FFILE=hdl.f
-FFILE=hdl.f.test
+FFILE=src_ift/hdl.f
+TOPFILE=src_ift/cellift_top_rewrite.sv
+HEADER=src_ift/common_header.sv
 CUSTOMTCL=
 gui=1
 JOB=
 SVA=
 STCL=
-TCL=./jg_base.tcl.test
+#TCL=./jg_base.tcl.test
+TCL=./src_ift/jg.tcl
 #TCL=./jg_base.tcl
 #TCL=./jg_base_nrst.tcl
+
 
 SYM="0"
 POSITIONAL=()
@@ -75,8 +77,8 @@ case $key in
     shift
     ;;
     -t|--tcl)
-    #CUSTOMTCL="$2"
-    TCL="$2"
+    CUSTOMTCL="$2"
+    #TCL="$2"
     shift 
     shift
     ;;
@@ -224,10 +226,9 @@ echo "[RUN_JG] CMDTASK: $CMDTASK"
 sed -i "s~#PROVE_ACTION~prove -task mytask~" $TCLF
 #sed -i "s~#PROVE_ACTION~prove -all~" $TCLF
 
-
-#if [ "$gui" -eq "1" ]; then
-#    sed -i "s~exit~## exit~" $TCLF
-#fi
+if [ "$gui" -eq "1" ]; then
+    sed -i "s~exit~## exit~" $TCLF
+fi
 
 DATE=$(date +%y-%m-%d-%H_%M_%S)
 PROJ="${JOB}/${filename}_jgsession_$DATE"
@@ -235,20 +236,20 @@ if [ "$gui" -eq "0" ]; then
     echo "[RUN_JG] no gui"
     echo "[RUN_JG] jg -no_gui -fpv $TCLF -proj $PROJ"
     /cad/cadence/jasper_2025.12/bin/jg -no_gui -fpv $TCLF -proj $PROJ
-    RUNDIR="${JOB}/${filename}_rundir"
+#    RUNDIR="${JOB}/${filename}_rundir"
 
-    if [ "$Q" -eq "1" ]; then
-        exit 1
-    else 
-        if [ ! -d $RUNDIR ]; then
-            mkdir $RUNDIR
-        fi
-        mv $PROJ $RUNDIR
-        mv $TOPV $RUNDIR
-        mv $TCLF $RUNDIR
-        mv $HDLF $RUNDIR
-        mv $SETUPFILE $RUNDIR
-    fi
+#    if [ "$Q" -eq "1" ]; then
+#        exit 1
+#    else 
+#        if [ ! -d $RUNDIR ]; then
+#            mkdir $RUNDIR
+#        fi
+#        mv $PROJ $RUNDIR
+#        mv $TOPV $RUNDIR
+#        mv $TCLF $RUNDIR
+#        mv $HDLF $RUNDIR
+#        mv $SETUPFILE $RUNDIR
+#    fi
 else
     echo "[RUN_JG] gui"
     echo "[RUN_JG] jg -fpv $TCLF -proj $PROJ"

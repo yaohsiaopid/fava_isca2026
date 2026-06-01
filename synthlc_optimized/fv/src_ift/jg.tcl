@@ -2,13 +2,13 @@
 set assert_report_incompletes 1
 set FPV 1
 
-proc exit_if_error {} {
-    if [get_message -number error] {
-        exit -force
-    }
-    after 10000 exit_if_error
-}
-exit_if_error
+#proc exit_if_error {} {
+#    if [get_message -number error] {
+#        exit -force
+#    }
+#    after 10000 exit_if_error
+#}
+#exit_if_error
 
 # 
 exec UPDATEFILE
@@ -20,16 +20,20 @@ elaborate -bbox_m {\frontend} -top ariane
 clock clk_i
 
 reset !rst_ni
-set_engine_mode {K C Tri I N AD AM Hp B}
 set_proofgrid_per_engine_max_jobs 32
 set_proofgrid_max_jobs 32
-set_prove_time_limit 12m
-set_prove_per_property_time_limit 12m
-#TASKCREATION
 
+#TASKCREATION
 task -set mytask
 
+set_prove_time_limit 3h
+#set_prove_per_property_time_limit 12m
+
+#CUSTOMTCL
+
+set_engine_mode {K C Tri I N AD AM Hp B}
 #PROVE_ACTION
 puts "END"
 report -task mytask -csv -results -file "CSVNAME.csv" -force
+save "CSVNAME.db" -clean -include {app_data session_data elaborated_design} -force
 exit

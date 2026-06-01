@@ -10,16 +10,34 @@ PWD_PREFIX=$(basename ${PWD})
 INSTNDIR=opcodes_gen_all
 # run over all
 INSTN_FILES=$(ls $INSTNDIR)
-fnm=DIV.sv
-if [ -z $1 ];
-then
-    echo "Pass an argument such as as \`./run_an_instn_demo.sh LW.sv\`"
-    exit
-else
-    echo "===> Processing: $1"
-    fnm="$1"
-fi
 
+fnm=""
+gui="0"
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    -i|--insn)
+    fnm="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -g|--gui)
+    gui="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+
+if [[ -z "$fnm" ]]; then
+    echo "Error: -i/--insn option is required"
+    exit 1
+fi
 
 filename=$(basename $fnm)
 fileprefix="${filename%.*}"
@@ -65,8 +83,7 @@ STEP 5 at $(pwd) $(date)
 ================================================================================
 "
 
-DIR=xIftIntrinsic
-#PYSCRPT=xRunSpv
+DIR=xIftDynamic
 PYSCRPT=xRunIFT
 confirmed="y"
 if [ -d "${DIR}" ]; then
@@ -74,27 +91,70 @@ if [ -d "${DIR}" ]; then
     read confirmed
 fi
 if [ $confirmed == "y" ]; then
-    #JOB="spv_rtl2mupath_taint_rs1"
-    JOB="ift_rtl2mupath_taint_both_rs1_rs2"
-
-    SVFILE=$(realpath ${DIR})/${JOB}.sv
-    TCLFILE=$(realpath ${DIR})/${JOB}.tcl
+    
+    # Taint both operands
+    JOB="ift_dyn_rtl2mupath_taint_both_rs1_rs2"
+    TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
 
     # Generate SV and TCL for HB properties
     cp -r ../${DIR} .
-    cd ${DIR}; python3 ${PYSCRPT}.py gen taint_both_rs1_rs2; cd ..
+    cd ${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_both_rs1_rs2; cd ../../..
 
-    # Run Jasper to get HB property results
-    cd ../..
-    #./run.sh ${FV_UNITDIR} ${TCLFILE} ${SVFILE}
-    #./RUN_JG.sh -j ${INAME_DIR}/${DIR} -s ${SVFILE} -t ${TCLFILE} -g 1 --spv 1
-#    ./RUN_JG_ift.sh -j {job} -s {filename} -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv -p src_ift/common_header.sv -t src_ift/jg.tcl -g 1
-    ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv -p src_ift/common_header.sv -g 0
+    # Loop over every .sv file found in the directory and run Jasper
+    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
+    done
+
+
+    # Taint RS1 only
+    JOB="ift_dyn_rtl2mupath_taint_rs1"
+    TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+
+    # Generate SV and TCL for HB properties
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs1; cd ../../..
+
+    # Loop over every .sv file found in the directory and run Jasper
+    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
+    done
+
+
+    # Taint RS2 only
+    JOB="ift_dyn_rtl2mupath_taint_rs2"
+    TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+
+    # Generate SV and TCL for HB properties
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_rs2; cd ../../..
+    
+    # Loop over every .sv file found in the directory and run Jasper
+    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
+    done
 fi
 
 
 # Post process HB property results
 cd ${INAME_DIR}/${DIR};
 python3 ${PYSCRPT}.py pp; 
-#python3 ${PYSCRPT}.py stats; 
 cd ../
