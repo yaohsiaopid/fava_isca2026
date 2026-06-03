@@ -152,9 +152,76 @@ if [ $confirmed == "y" ]; then
         ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
             -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
             -p src_ift/common_header.sv -g ${gui}
+
+    done
+
+    # YOUNGER DYNAMIC TRANSMITTER
+    
+    # Taint both operands
+    JOB="ift_dyn_rtl2mupath_taint_both_rs1_rs2"
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_both_rs1_rs2; cd ../../..
+ 
+    # Loop over every .sv file found in the directory and run Jasper
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+_yngr\.sv" | sort) )
+    for SVFILE in "${SVFILES[@]}"; do
+        TCLFILE="${SVFILE%.sv}.tcl"
+        
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
+    done
+
+
+    # Taint RS1 only
+    JOB="ift_dyn_rtl2mupath_taint_rs1"
+    #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+
+    # Generate SV and TCL for HB properties
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs1; cd ../../..
+
+    # Loop over every .sv file found in the directory and run Jasper
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+_yngr\.sv" |sort) )
+    for SVFILE in "${SVFILES[@]}"; do
+        TCLFILE="${SVFILE%.sv}.tcl"
+
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
+    done
+
+
+    # Taint RS2 only
+    JOB="ift_dyn_rtl2mupath_taint_rs2"
+    #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
+
+    # Generate SV and TCL for HB properties
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
+
+    # Loop over every .sv file found in the directory and run Jasper
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+_yngr\.sv"|sort ) )
+    for SVFILE in "${SVFILES[@]}"; do
+        TCLFILE="${SVFILE%.sv}.tcl"
+
+        echo "=== Running job: ${JOB} ==="
+        echo "    SV file:  ${SVFILE}"
+        echo "    TCL file: ${TCLFILE}"
+
+        ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE} -s ${SVFILE} \
+            -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv \
+            -p src_ift/common_header.sv -g ${gui}
     done
 fi
-
 
 # Post process HB property results
 cd ${INAME_DIR}/${DIR};

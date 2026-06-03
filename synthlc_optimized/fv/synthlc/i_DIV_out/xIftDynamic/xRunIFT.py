@@ -445,7 +445,7 @@ def pp(instr):
                 row += str(df_map_intr[group_id]["taint_rs1"][s])
                 row += " "
 
-                row += str(df_map_intr[group_id]["taint_rs1"][s])
+                row += str(df_map_intr[group_id]["taint_rs2"][s])
                 row += " "
 
                 row += str(df_map_dyn[group_id]["taint_rs1"][s])

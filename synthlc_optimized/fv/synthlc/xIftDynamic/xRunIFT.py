@@ -173,11 +173,11 @@ def gen():
             for line in idef:
                 i1_constraint += (line.replace("i0", "i1"))
 
-        outstring = dynamic_template_no_props
         rep_pairs = [
             ("OP_TAINT", DEFINEOPTAINT),
             ("INSTN_CONSTRAINT", i0_constraint),
             ("I1_CONSTRAINT", i1_constraint)]
+        outstring = dynamic_template_no_props
         for tt in rep_pairs:
             outstring = outstring.replace(tt[0], tt[1])
 
@@ -187,7 +187,18 @@ def gen():
             f.write(h_)
             f.write(outstring)
             f.write(e_)
- 
+
+        outstring_younger = dynamic_younger_template_no_props
+        for tt in rep_pairs:
+            outstring_younger = outstring_younger.replace(tt[0], tt[1])
+
+        sv_file_younger = f"{JOB}_group{group_id}_yngr.sv"
+        print(f"Writing SV: {sv_file_younger}")
+        with open (sv_file_younger, "w") as f:
+            f.write(h_)
+            f.write(outstring_younger)
+            f.write(e_)
+
         all_dest_pls = set()
         for s, dest_set_list in decisions.items():
             for dest_set in dest_set_list:
@@ -241,6 +252,11 @@ def gen():
             #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
             #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
             #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+        
+        tcl_file_younger = f"{JOB}_group{group_id}_yngr.tcl"
+        print(f"Writing TCL: {tcl_file_younger}")
+        with open (tcl_file_younger, "w") as f:
+            f.write(htcl_local)
 
     return
 
@@ -258,6 +274,7 @@ def gen_per_field(taint):
 
     for agroup in group_items:
         htcl_local = copy.deepcopy(htcl_)
+        htcl_local_younger  = copy.deepcopy(htcl_)
         group_id, field, t_instns = agroup
         print(agroup)
         if field == "" :
@@ -282,16 +299,22 @@ def gen_per_field(taint):
             return
         df = pd.read_csv(csvf, dtype=mydtypes)
 
+        csvf_younger = f"{JOB_prev}_group{group_id}.csv"
+        if not os.path.exists(csvf_younger):
+            print("FAIL %s not found" % csvf_younger)
+            return
+        df_younger = pd.read_csv(csvf_younger, dtype=mydtypes)
+
         i1_constraint = ""
         with open("%s/group_subset_%s.sv" % (BATCH_INSTNDIR, group_id), "r") as idef:
             for line in idef:
                 i1_constraint += (line.replace("i0", "i1"))
 
-        outstring = dynamic_template_no_props
         rep_pairs = [
             ("OP_TAINT", DEFINEOPTAINT),
             ("INSTN_CONSTRAINT", i0_constraint),
             ("I1_CONSTRAINT", i1_constraint)]
+        outstring = dynamic_template_no_props
         for tt in rep_pairs:
             outstring = outstring.replace(tt[0], tt[1])
 
@@ -300,6 +323,17 @@ def gen_per_field(taint):
         with open (sv_file, "w") as f:
             f.write(h_)
             f.write(outstring)
+            f.write(e_)
+
+        outstring_younger = dynamic_younger_template_no_props
+        for tt in rep_pairs:
+            outstring_younger = outstring_younger.replace(tt[0], tt[1])
+
+        sv_file_younger = f"{JOB}_group{group_id}_yngr.sv"
+        print(f"Writing SV: {sv_file}")
+        with open (sv_file_younger, "w") as f:
+            f.write(h_)
+            f.write(outstring_younger)
             f.write(e_)
 
         all_dest_pls = set()
@@ -346,6 +380,16 @@ def gen_per_field(taint):
                         in_dest=in_dest,
                         t0_sigs=", ".join(added_t0_sigs)
                     )
+                res_yng, bnd_yng, time_yng = df_query(df_younger, f"{taint_prev}_src_{s}_dest_{cnt}",cover_prop=True, exact_name=True)
+                if (res == "covered") and added_t0_sigs:
+                    htcl_local_younger += PROP_TMPLT2.format(
+                        tnm=taint,
+                        s=s,
+                        d=cnt,
+                        src=prefix + s,
+                        in_dest=in_dest,
+                        t0_sigs=", ".join(added_t0_sigs)
+                    )
                 cnt += 1
 
         tcl_file = f"{JOB}_group{group_id}.tcl"
@@ -356,6 +400,11 @@ def gen_per_field(taint):
             #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n")
             #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
             #f.write("save %s/%s.db -force -clean -include {app_data session_data elaborated_design}\n" % (os.getcwd(), JOB))
+
+        tcl_file_younger = f"{JOB}_group{group_id}_yngr.tcl"
+        print(f"Writing TCL: {tcl_file_younger}")
+        with open (tcl_file_younger, "w") as f:
+            f.write(htcl_local_younger)
 
     return
 
@@ -399,7 +448,7 @@ def pp(instr):
                 for s, dest_set_list in decisions.items():
                     df_map_intr[group_id][taint][s] = 0 
 
-            # Dynamic
+            # Dynamic older
             JOB = "ift_dyn_rtl2mupath_" + taint + f"_group{group_id}"
             csvf = f"{JOB}.csv"
             if not os.path.exists(csvf):
@@ -419,6 +468,25 @@ def pp(instr):
 
                     if num_dest_sets_tainted > 1:
                         df_map_dyn[group_id][taint][s] = 1
+
+            # Dynamic younger
+            JOB="ift_intr_rtl2mupath_" + taint + f"_group{group_id}" + "_yngr"
+            csvf = f"../xIftIntrinsic/{JOB}.csv"
+            if os.path.exists(csvf):
+                df = pd.read_csv(csvf, dtype=mydtypes)
+                for s, dest_set_list in decisions.items():
+                    df_map_intr[group_id][taint][s] = 0
+                    num_dest_sets_tainted = 0
+                    for cnt in range(len(dest_set_list)):
+                        res, bnd, time = df_query_return_on_no_exist(df, f"{taint}_src_{s}_dest_{cnt}", cover_prop=True, exact_name=True)
+                        if res is None:
+                            continue
+                        elif res == "covered":
+                            num_dest_sets_tainted += 1
+
+                    if num_dest_sets_tainted > 1:
+                        df_map_intr[group_id][taint][s] = 1
+
 
     with open("leakage_signature.txt", "w") as f:
         N=22
