@@ -1,0 +1,10 @@
+issue_s2,id_stage_s1,4
+scb_0_s12,id_stage_s1,6
+scb_0_s12,issue_s2,7
+scb_0_s12,csr_buffer_s1,8
+scb_0_s13,id_stage_s1,9
+scb_0_s13,csr_buffer_s1,10
+scb_0_s8,id_stage_s1,11
+csr_buffer_s1,id_stage_s1,12
+csr_buffer_s1,scb_0_s12,13
+csr_buffer_s1,scb_0_s13,14

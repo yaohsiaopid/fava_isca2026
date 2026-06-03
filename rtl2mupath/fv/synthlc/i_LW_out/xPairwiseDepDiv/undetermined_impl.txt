@@ -1,0 +1,8 @@
+id_stage_s1,mem_req_s1
+issue_s16,mem_req_s1
+load_unit_s1,scb_0_s12
+load_unit_s1,scb_0_s13
+load_unit_buff_s1,scb_0_s12
+load_unit_buff_s1,scb_0_s13
+mem_req_s1,scb_0_s12
+mem_req_s1,scb_0_s13

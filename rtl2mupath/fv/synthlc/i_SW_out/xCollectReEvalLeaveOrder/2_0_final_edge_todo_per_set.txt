@@ -1,0 +1,15 @@
+lsq_enq_1_s1___final,scb_0_s13:>,=,<
+lsq_enq_1_s1___final,scb_0_s8___final:>,=,<
+lsq_enq_1_s1___final,stb_com_0_s1:>,=,<
+lsq_enq_1_s1___final,stb_com_0_s1___final:>,=,<
+lsq_enq_1_s1___final,store_unit_s1:>,=,<
+scb_0_s13,stb_spec_0_s1___final:>,=
+lsq_enq_1_s1___final,stb_spec_0_s1:<,=
+lsq_enq_1_s1___final,stb_spec_0_s1___final:<,=
+stb_com_0_s1,stb_spec_0_s1___final:<,=
+stb_com_0_s1___final,stb_spec_0_s1___final:<,=
+mem_req_s1,stb_spec_0_s1___final:<,=
+scb_0_s8___final,store_unit_s1:<,=
+lsq_enq_1_s1___final,store_unit_s3:<,=
+lsq_enq_1_s1___final,store_unit_s3___final:<,=
+lsq_enq_1_s1___final,mem_req_s1:>,=

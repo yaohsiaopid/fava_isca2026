@@ -1,0 +1,43 @@
+* undetermined hb
+id_stage_s1,mem_req_s1
+issue_s16,stb_com_0_s1
+issue_s16,store_unit_s1
+issue_s16,mem_req_s1
+lsq_enq_0_s1,scb_0_s12
+lsq_enq_0_s1,scb_0_s13
+lsq_enq_0_s1,stb_com_0_s1
+lsq_enq_0_s1,store_unit_s1
+lsq_enq_1_s1,scb_0_s12
+lsq_enq_1_s1,scb_0_s13
+lsq_enq_1_s1,stb_com_0_s1
+lsq_enq_1_s1,store_unit_s1
+scb_0_s12,stb_com_0_s1
+scb_0_s12,mem_req_s1
+scb_0_s13,stb_com_0_s1
+scb_0_s13,mem_req_s1
+scb_0_s8,stb_com_0_s1
+scb_0_s8,stb_spec_0_s1
+scb_0_s8,store_unit_s1
+scb_0_s8,store_unit_s3
+scb_0_s8,mem_req_s1
+stb_spec_0_s1,mem_req_s1
+store_unit_s1,scb_0_s12
+store_unit_s1,scb_0_s13
+store_unit_s3,scb_0_s13
+store_unit_s3,stb_com_0_s1
+store_unit_s3,stb_spec_0_s1
+lsq_enq_0_s1,mem_req_s1
+lsq_enq_1_s1,mem_req_s1
+store_unit_s1,mem_req_s1
+store_unit_s3,mem_req_s1
+store_unit_s3,store_unit_s1
+* undetermined whb
+lsq_enq_0_s1,store_unit_s3
+lsq_enq_1_s1,store_unit_s3
+scb_0_s12,stb_spec_0_s1
+stb_spec_0_s1,scb_0_s12
+stb_spec_0_s1,scb_0_s13
+store_unit_s3,lsq_enq_0_s1
+store_unit_s3,lsq_enq_1_s1
+stb_com_0_s1,mem_req_s1
+* undetermined concur

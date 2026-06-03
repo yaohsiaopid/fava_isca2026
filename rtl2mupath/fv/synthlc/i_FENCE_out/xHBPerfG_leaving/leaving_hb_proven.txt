@@ -1,0 +1,9 @@
+1,id_stage_s1,0,issue_s2
+1,id_stage_s1,1,scb_0_s12
+1,id_stage_s1,1,scb_1_s12
+1,id_stage_s1,1,scb_2_s12
+1,id_stage_s1,1,scb_3_s12
+1,id_stage_s1,0,scb_0_s8
+1,id_stage_s1,0,scb_1_s8
+1,id_stage_s1,0,scb_2_s8
+1,id_stage_s1,0,scb_3_s8
