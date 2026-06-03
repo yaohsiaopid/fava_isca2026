@@ -5,13 +5,17 @@ set SRCDIR HDLDIR
 
 ############
 set FPV 1
+set SPV 0
 set REACH 0
 set CUSTOMTCL 0
 ############
 exec UPDATEFILE
 # Analyze RTL files
 analyze -sv09 -f jg_hdl.f -y $SRCDIR +incdir+$SRCDIR
-
+if {$SPV == 1} {
+    puts "Initilizing SPV"
+    check_spv -init
+}
 if {$REACH == 1} {
     puts "test bboxing mfpt" 
     #elaborate -bbox_m  {miss_prediction_fix_table} -bbox_m {reorderbuf}
@@ -93,6 +97,7 @@ if {$FPV == 1} {
     
     puts "END"
     report -task mytask -csv -results -file "CSVNAME.csv" -force
+    save "CSVNAME.db" -clean -include {app_data session_data elaborated_design} -force
     exit
 }
 
