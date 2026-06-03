@@ -1,0 +1,8 @@
+Reachable (accept and perform (i.e., without txn) and transition to new state)
+Unreachable (accept and perform (i.e., without txn) but no transition to new state)
+P_V,ci_load,P_I
+P_V,ci_store,P_I
+Reachable (accept and perform (i.e., without txn) with value change possible
+P_V,ci_store
+Unreachable (accept and perform (i.e., without txn) with value change not possible
+P_V,ci_load

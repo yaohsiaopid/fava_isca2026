@@ -1,0 +1,12 @@
+For a given picl sets starts with (state, req), which PiCL/state can have the value component differed from previous picl?
+Reachable:
+P_I,ci_load,0,P_IVD+P_V: P_V
+P_I,ci_store,0,P_IVD+P_V: P_IVD;P_V
+Unreachable:
+P_I,ci_load,0,P_IVD+P_V: P_IVD
+P_V,ci_evict,0,P_I: P_I
+For a given picl sets starts with (state, req), which PiCL/state can have the value component always the same as data argument?
+Proven:
+P_I,ci_store,0,P_IVD+P_V: P_IVD
+Disproven:
+P_I,ci_store,0,P_IVD+P_V: P_V

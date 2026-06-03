@@ -1,0 +1,303 @@
+
+This program should be regarded as a DEBUGGING aid, not as a 
+certifier of correctness.
+Call with the -l flag or read the license file for terms
+and conditions of use.
+Run this program with "-h" for the list of options.
+
+Bugs, questions, and comments should be directed to
+"melatti@di.uniroma1.it".
+
+CMurphi compiler last modified date: Jan 31 2025
+Include files last modified date:    Nov 8 2016
+==========================================================================
+
+==========================================================================
+Caching Murphi Release 5.4.9.1
+Finite-state Concurrent System Verifier.
+
+Caching Murphi Release 5.4.9.1 is based on various versions of Murphi.
+Caching Murphi Release 5.4.9.1 :
+Copyright (C) 2009-2012 by Sapienza University of Rome.
+Murphi release 3.1 :
+Copyright (C) 1992 - 1999 by the Board of Trustees of
+Leland Stanford Junior University.
+
+==========================================================================
+
+Protocol: past_builds/VI_buggy_build/s4_constrained/out/P_V_ci_evict_0_0_sent
+
+Algorithm:
+	Verification by breadth first search.
+	with symmetry algorithm 3 -- Heuristic Small Memory Normalization
+	with permutation trial limit 10.
+
+Memory usage:
+
+	* The size of each state is 472 bits (rounded up to 64 bytes).
+	* The memory allocated for the hash table and state queue is
+	  68719 Mbytes.
+	  With two words of overhead per state, the maximum size of
+	  the state space is 943948877 states.
+	   * Use option "-k" or "-m" to increase this, if necessary.
+	* Capacity in queue for breadth-first search: 94394887 states.
+	   * Change the constant gPercentActiveStates in mu_prolog.inc
+	     to increase this, if necessary.
+
+The following is the error trace for the error:
+
+	Invariant "P_V_ci_evict_rset_0" failed.
+
+Startstate Startstate 0 fired.
+cur_node:Undefined
+msg_imm_sent_set[GetMsg]:false
+msg_imm_sent_set[PutMsg]:false
+msg_imm_sent_set[DataRespMsg]:false
+prevMsg:Undefined
+tracked:false
+start:false
+cur_idx:0
+tar[0]:P_I
+prevProcs:Undefined
+prevProcReq.cl:Undefined
+prevProcReq.vld:Undefined
+prevProcReq.tp:Undefined
+selc:Proc_3
+match:0
+HomeNode.state:H_I
+HomeNode.val:Undefined
+Procs[Proc_1].state:P_I
+Procs[Proc_1].val:Undefined
+Procs[Proc_2].state:P_I
+Procs[Proc_2].val:Undefined
+Procs[Proc_3].state:P_I
+Procs[Proc_3].val:Undefined
+LastWrite:Value_2
+MainMemory:Value_2
+gBuf.mtype:Undefined
+gBuf.src:Undefined
+gBuf.dst:Undefined
+gBuf.val:Undefined
+ackBus[HomeType]:false
+ackBus[Proc_1]:false
+ackBus[Proc_2]:false
+ackBus[Proc_3]:false
+msgBuf[HomeType].mtype:Undefined
+msgBuf[HomeType].src:Undefined
+msgBuf[HomeType].dst:Undefined
+msgBuf[HomeType].val:Undefined
+msgBuf[Proc_1].mtype:Undefined
+msgBuf[Proc_1].src:Undefined
+msgBuf[Proc_1].dst:Undefined
+msgBuf[Proc_1].val:Undefined
+msgBuf[Proc_2].mtype:Undefined
+msgBuf[Proc_2].src:Undefined
+msgBuf[Proc_2].dst:Undefined
+msgBuf[Proc_2].val:Undefined
+msgBuf[Proc_3].mtype:Undefined
+msgBuf[Proc_3].src:Undefined
+msgBuf[Proc_3].dst:Undefined
+msgBuf[Proc_3].val:Undefined
+msgBufNonEmpty:false
+curRequsts[Proc_1].val:Undefined
+curRequsts[Proc_1].tp:Undefined
+curRequsts[Proc_1].vld:Undefined
+curRequsts[Proc_2].val:Undefined
+curRequsts[Proc_2].tp:Undefined
+curRequsts[Proc_2].vld:Undefined
+curRequsts[Proc_3].val:Undefined
+curRequsts[Proc_3].tp:Undefined
+curRequsts[Proc_3].vld:Undefined
+----------
+
+Rule store_P_I, v:Value_2, n:Proc_3 fired.
+cur_node:Proc_3
+prevMsg:GetMsg
+prevProcs:P_I
+prevProcReq.cl:Value_2
+prevProcReq.vld:true
+prevProcReq.tp:ci_store
+Procs[Proc_3].state:P_IVD
+Procs[Proc_3].val:Value_2
+gBuf.mtype:GetMsg
+gBuf.src:Proc_3
+curRequsts[Proc_3].tp:store
+curRequsts[Proc_3].vld:true
+----------
+
+Rule receiveFromBus, n:HomeType fired.
+cur_node:HomeType
+prevMsg:Undefined
+prevProcs:P_IVD
+prevProcReq.cl:Undefined
+prevProcReq.vld:Undefined
+prevProcReq.tp:Undefined
+HomeNode.state:H_V
+HomeNode.val:Value_2
+ackBus[HomeType]:true
+msgBuf[HomeType].mtype:DataRespMsg
+msgBuf[HomeType].src:HomeType
+msgBuf[HomeType].dst:Proc_3
+msgBuf[HomeType].val:Value_2
+msgBufNonEmpty:true
+----------
+
+Rule receiveFromBus, n:Proc_3 fired.
+cur_node:Proc_3
+ackBus[Proc_3]:true
+----------
+
+Rule receiveFromBus, n:Proc_1 fired.
+cur_node:Proc_1
+ackBus[Proc_1]:true
+----------
+
+Rule receiveFromBus, n:Proc_2 fired.
+cur_node:Proc_2
+ackBus[Proc_2]:true
+----------
+
+Rule bus_atomic_req fired.
+gBuf.mtype:DataRespMsg
+gBuf.src:HomeType
+gBuf.dst:Proc_3
+gBuf.val:Value_2
+ackBus[HomeType]:false
+ackBus[Proc_1]:false
+ackBus[Proc_2]:false
+ackBus[Proc_3]:false
+msgBuf[HomeType].mtype:Undefined
+msgBuf[HomeType].src:Undefined
+msgBuf[HomeType].dst:Undefined
+msgBuf[HomeType].val:Undefined
+msgBufNonEmpty:false
+----------
+
+Rule receiveFromBus, n:HomeType fired.
+cur_node:HomeType
+ackBus[HomeType]:true
+----------
+
+Rule receiveFromBus, n:Proc_3 fired.
+cur_node:Proc_3
+Procs[Proc_3].state:P_V
+ackBus[Proc_3]:true
+----------
+
+Rule receiveFromBus, n:Proc_1 fired.
+cur_node:Proc_1
+prevProcs:P_V
+ackBus[Proc_1]:true
+----------
+
+Rule receiveFromBus, n:Proc_2 fired.
+cur_node:Proc_2
+ackBus[Proc_2]:true
+----------
+
+Rule bus_atomic_req fired.
+gBuf.mtype:Undefined
+gBuf.src:Undefined
+gBuf.dst:Undefined
+gBuf.val:Undefined
+ackBus[HomeType]:false
+ackBus[Proc_1]:false
+ackBus[Proc_2]:false
+ackBus[Proc_3]:false
+----------
+
+Rule evict_P_V, n:Proc_3 fired.
+cur_node:Proc_3
+prevMsg:PutMsg
+prevProcReq.vld:true
+prevProcReq.tp:ci_evict
+Procs[Proc_3].state:P_I
+gBuf.mtype:PutMsg
+gBuf.src:Proc_3
+gBuf.dst:HomeType
+gBuf.val:Value_2
+----------
+
+Rule track_P_V_ci_evict fired.
+msg_imm_sent_set[PutMsg]:true
+tracked:true
+start:true
+----------
+
+Rule receiveFromBus, n:HomeType fired.
+The last state of the trace (in full) is:
+cur_node:HomeType
+msg_imm_sent_set[GetMsg]:false
+msg_imm_sent_set[PutMsg]:false
+msg_imm_sent_set[DataRespMsg]:false
+prevMsg:Undefined
+tracked:true
+start:false
+cur_idx:1
+tar[0]:P_I
+prevProcs:P_I
+prevProcReq.cl:Undefined
+prevProcReq.vld:Undefined
+prevProcReq.tp:Undefined
+selc:Proc_3
+match:1
+HomeNode.state:H_I
+HomeNode.val:Value_2
+Procs[Proc_1].state:P_I
+Procs[Proc_1].val:Undefined
+Procs[Proc_2].state:P_I
+Procs[Proc_2].val:Undefined
+Procs[Proc_3].state:P_I
+Procs[Proc_3].val:Value_2
+LastWrite:Value_2
+MainMemory:Value_2
+gBuf.mtype:PutMsg
+gBuf.src:Proc_3
+gBuf.dst:HomeType
+gBuf.val:Value_2
+ackBus[HomeType]:true
+ackBus[Proc_1]:false
+ackBus[Proc_2]:false
+ackBus[Proc_3]:false
+msgBuf[HomeType].mtype:Undefined
+msgBuf[HomeType].src:Undefined
+msgBuf[HomeType].dst:Undefined
+msgBuf[HomeType].val:Undefined
+msgBuf[Proc_1].mtype:Undefined
+msgBuf[Proc_1].src:Undefined
+msgBuf[Proc_1].dst:Undefined
+msgBuf[Proc_1].val:Undefined
+msgBuf[Proc_2].mtype:Undefined
+msgBuf[Proc_2].src:Undefined
+msgBuf[Proc_2].dst:Undefined
+msgBuf[Proc_2].val:Undefined
+msgBuf[Proc_3].mtype:Undefined
+msgBuf[Proc_3].src:Undefined
+msgBuf[Proc_3].dst:Undefined
+msgBuf[Proc_3].val:Undefined
+msgBufNonEmpty:false
+curRequsts[Proc_1].val:Undefined
+curRequsts[Proc_1].tp:Undefined
+curRequsts[Proc_1].vld:Undefined
+curRequsts[Proc_2].val:Undefined
+curRequsts[Proc_2].tp:Undefined
+curRequsts[Proc_2].vld:Undefined
+curRequsts[Proc_3].val:Undefined
+curRequsts[Proc_3].tp:store
+curRequsts[Proc_3].vld:true
+----------
+
+End of the error trace.
+
+==========================================================================
+
+Result:
+
+	Invariant "P_V_ci_evict_rset_0" failed.
+
+State Space Explored:
+
+	618 states, 2079 rules fired in 40.78s.
+
+Command exited with non-zero status 1
+Time: 45.37 seconds
