@@ -229,8 +229,9 @@ def gen_per_field(taint):
             return
 
     JOB="ift_intr_rtl2mupath_" + taint
+    JOB_prev="ift_intr_rtl2mupath_taint_both_rs1_rs2"
 
-    df = pd.read_csv(f"{os.getcwd()}+{JOB}", dtype=mydtypes)
+    df = pd.read_csv(f"{os.getcwd()}/{JOB_prev}.csv", dtype=mydtypes)
     all_dest_pls = set()
     for s, dest_set_list in decisions.items():
         all_dest_pls = set()
@@ -266,7 +267,7 @@ def gen_per_field(taint):
 
 
             in_dest += "1'b1"
-            res, bnd, time = df_query(df, f"{taint_both}_src_{s}_dest_{cnt}")
+            res, bnd, time = df_query(df, f"{taint_both}_src_{s}_dest_{cnt}",cover_prop=True, exact_name=True)
             if (res == "covered") and len(added_t0_sigs) > 0:
                 htcl_ += PROP_TMPLT2.format(
                     tnm=taint,

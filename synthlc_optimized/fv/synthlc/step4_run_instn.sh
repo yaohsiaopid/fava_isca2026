@@ -117,7 +117,7 @@ if [ $confirmed == "y" ]; then
     fi
 
     # Taint RS2 only
-e   cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
+    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
     if [[ -f "$SVFILE2" ]]; then
         ./RUN_JG_ift.sh -j ${INAME_DIR}/${DIR} -t ${TCLFILE2} -s ${SVFILE2} -h src_ift/hdl.f -f src_ift/cellift_top_rewrite.sv -p src_ift/common_header.sv -g ${gui}
     fi

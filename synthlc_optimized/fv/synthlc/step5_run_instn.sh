@@ -94,8 +94,11 @@ if [ $confirmed == "y" ]; then
     cd ${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_both_rs1_rs2; cd ../../..
 
     # Loop over every .sv file found in the directory and run Jasper
-    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
-
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+\.sv" | sort) )
+    for SVFILE in "${SVFILES[@]}"; do
+        TCLFILE="${SVFILE%.sv}.tcl"
+       
         echo "=== Running job: ${JOB} ==="
         echo "    SV file:  ${SVFILE}"
         echo "    TCL file: ${TCLFILE}"
@@ -114,7 +117,9 @@ if [ $confirmed == "y" ]; then
     cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs1; cd ../../..
 
     # Loop over every .sv file found in the directory and run Jasper
-    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+\.sv" |sort) )
+    for SVFILE in "${SVFILES[@]}"; do
         TCLFILE="${SVFILE%.sv}.tcl"
 
         echo "=== Running job: ${JOB} ==="
@@ -135,7 +140,9 @@ if [ $confirmed == "y" ]; then
     cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
     
     # Loop over every .sv file found in the directory and run Jasper
-    for SVFILE in $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv; do
+    #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
+    SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+\.sv"|sort ) )
+    for SVFILE in "${SVFILES[@]}"; do
         TCLFILE="${SVFILE%.sv}.tcl"
 
         echo "=== Running job: ${JOB} ==="
@@ -151,5 +158,5 @@ fi
 
 # Post process HB property results
 cd ${INAME_DIR}/${DIR};
-python3 ${PYSCRPT}.py pp; 
+python3 ${PYSCRPT}.py pp ${fileprefix} x; 
 cd ../
