@@ -1,0 +1,4 @@
+scb_0_s14,csr_buffer_s1
+scb_1_s14,csr_buffer_s1
+scb_2_s14,csr_buffer_s1
+scb_3_s14,csr_buffer_s1

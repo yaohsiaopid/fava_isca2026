@@ -1,0 +1,2 @@
+csr_buffer_s1,scb_0_s12
+csr_buffer_s1,scb_0_s13

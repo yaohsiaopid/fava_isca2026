@@ -1,0 +1,7 @@
+id_stage_s1,2
+issue_s2,1
+scb_0_s12,2
+scb_0_s13,1
+scb_0_s14,2
+scb_0_s8,1
+csr_buffer_s1,2

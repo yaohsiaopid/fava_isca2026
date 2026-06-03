@@ -1,0 +1,13 @@
+id_stage_s1,2
+issue_s16,1
+lsq_enq_0_s1,2
+lsq_enq_1_s1,2
+scb_0_s12,2
+scb_0_s13,1
+scb_0_s8,2
+load_unit_s1,1
+load_unit_buff_s1,1
+load_unit_op_s1,1
+load_unit_op_s2,1
+load_unit_op_s3,2
+mem_req_s1,1

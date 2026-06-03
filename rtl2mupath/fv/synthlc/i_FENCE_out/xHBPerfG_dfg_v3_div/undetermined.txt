@@ -1,0 +1,14 @@
+* undetermined hb
+issue_s2,scb_0_s12
+issue_s2,scb_0_s13
+scb_0_s12,scb_0_s13
+scb_0_s8,scb_0_s12
+* undetermined whb
+scb_0_s12,csr_buffer_s1
+scb_0_s8,issue_s2
+csr_buffer_s1,scb_0_s12
+csr_buffer_s1,scb_0_s13
+* undetermined concur
+issue_s2,scb_0_s8
+scb_0_s12,csr_buffer_s1
+scb_0_s8,issue_s2
