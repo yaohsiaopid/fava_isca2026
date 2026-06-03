@@ -1,6 +1,6 @@
 cover -name {taint_rs1_src_div_s1_dest_0} {@(posedge clk_i) div_s1 ##1 ( !div_s1 && !div_s2 && 1'b1 && (|{div_s1_t0, div_s2_t0, 1'b0}))}
 cover -name {taint_rs1_src_div_s1_dest_1} {@(posedge clk_i) div_s1 ##1 ( div_s1 && !div_s2 && 1'b1 && (|{div_s1_t0, 1'b0}))}
-cover -name {taint_rs1_src_div_s1_dest_2} {@(posedge clk_i) div_s1 ##1 ( !div_s1 && div_s2 && 1'b1 && (|{div_s2_t0, 1'b0}))}
+cover -name {taint_rs1_src_div_s1_dest_2} {@(posedge clk_i) ______ ##1 ( _________________ && 1'b1 && (|{_________, 1'b0}))}
 cover -name {taint_rs1_src_scb_0_s8_dest_1} {@(posedge clk_i) scb_0_s8 ##1 ( !scb_0_s12 && scb_0_s8 && !scb_0_s13 && 1'b1 && (|{scb_0_s8_t0, 1'b0}))}
 cover -name {taint_rs1_src_scb_0_s8_dest_2} {@(posedge clk_i) scb_0_s8 ##1 ( !scb_0_s12 && !scb_0_s8 && scb_0_s13 && 1'b1 && (|{scb_0_s13_t0, 1'b0}))}
 cover -name {taint_rs1_src_scb_0_s8_dest_3} {@(posedge clk_i) scb_0_s8 ##1 ( scb_0_s12 && !scb_0_s8 && !scb_0_s13 && 1'b1 && (|{scb_0_s12_t0, 1'b0}))}
