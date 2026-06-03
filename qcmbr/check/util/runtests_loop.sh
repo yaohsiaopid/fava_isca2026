@@ -186,15 +186,10 @@ run_single_test() {
   fi 
 }
 
-  export -f run_single_test
-  export OUTPUTDIR DIRNAME PIPELINE_NAME TIMEOUT_DURATION PIPEBIN GGRAPH DOTBIN OPT NATIVE
-
-  echo "--- Phase 2: Running tests in parallel ---"
-  # Use GNU Parallel to execute run_single_test for each test
-  # --jobs 0 will run one job per CPU core. You can set it to a specific number, e.g., --jobs 8
-  # --bar shows a progress bar
-  parallel --load 95% --jobs 5 --bar --halt now,fail=1 run_single_test ::: $TESTS
-  # parallel --load 80% --jobs -5 --bar --halt now,fail=1 run_single_test ::: $TESTS
+  echo "--- Phase 2: Running tests (sequential) ---"
+  for t in $TESTS; do
+    run_single_test "$t"
+  done
 fi
 
 

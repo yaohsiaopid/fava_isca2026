@@ -34,7 +34,7 @@ then
       python3 "$SCRIPT_DIR/pp.py" $FIG
       ff=${BASE}.c.gv
       if which tred > /dev/null 2>&1; then
-        tred ${ff} -o "${ff%.*}.trd.gv"
+        tred ${ff} > "${ff%.*}.trd.gv"
         sed -i "s/shape=circle/shape=circle,label=\"\"/g" "${ff%.*}.trd.gv"
         $DOTBIN -Tpng "${ff%.*}.trd.gv" -o "${ff%.*}.trd.png"
       fi
