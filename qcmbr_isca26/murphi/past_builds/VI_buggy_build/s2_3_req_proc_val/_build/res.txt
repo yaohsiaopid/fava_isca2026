@@ -1,0 +1,3 @@
+Proven (accept and perform (i.e., without txn) with value updated as request specified always) (could be bounded..)
+P_V,ci_store
+Disproven

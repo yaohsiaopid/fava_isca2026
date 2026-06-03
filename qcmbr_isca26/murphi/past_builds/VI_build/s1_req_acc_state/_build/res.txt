@@ -1,0 +1,11 @@
+Reachable
+P_I,ci_load
+P_I,ci_store
+P_V,ci_load
+P_V,ci_store
+P_V,ci_evict
+Unreachable
+P_I,ci_evict
+P_IVD,ci_load
+P_IVD,ci_store
+P_IVD,ci_evict

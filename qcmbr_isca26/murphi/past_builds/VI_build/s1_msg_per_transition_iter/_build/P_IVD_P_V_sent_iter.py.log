@@ -1,0 +1,3 @@
+Iteration 0: sent={'GetMsg': 'false', 'PutMsg': 'false', 'DataRespMsg': 'false'}
+Running verification on build/s1_msg_per_transition_iter/out/P_IVD_P_V_sent_0.m...
+b'build/s1_msg_per_transition_iter/_build/P_IVD_P_V_sent_0.txt\n'

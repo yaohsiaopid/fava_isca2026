@@ -1,0 +1,7 @@
+Reachable (accept and perform)
+P_V,ci_load
+P_V,ci_store
+Unreachable (accept but init txn)
+P_I,ci_load
+P_I,ci_store
+P_V,ci_evict

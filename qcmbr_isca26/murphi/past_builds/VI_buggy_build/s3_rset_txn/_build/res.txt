@@ -1,0 +1,5 @@
+Reachable (reachable set during a transaction of <s> <req>)
+P_I,ci_load,0,P_IVD+P_V
+P_I,ci_store,0,P_IVD+P_V
+P_V,ci_evict,0,P_I
+Unreachable 

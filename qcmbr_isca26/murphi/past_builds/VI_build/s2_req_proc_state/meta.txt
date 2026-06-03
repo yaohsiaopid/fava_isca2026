@@ -1,0 +1,5 @@
+P_I,ci_load
+P_I,ci_store
+P_V,ci_load
+P_V,ci_store
+P_V,ci_evict

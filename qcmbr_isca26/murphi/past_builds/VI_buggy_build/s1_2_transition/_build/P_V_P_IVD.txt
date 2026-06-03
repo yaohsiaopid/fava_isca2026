@@ -1,0 +1,86 @@
+
+This program should be regarded as a DEBUGGING aid, not as a 
+certifier of correctness.
+Call with the -l flag or read the license file for terms
+and conditions of use.
+Run this program with "-h" for the list of options.
+
+Bugs, questions, and comments should be directed to
+"melatti@di.uniroma1.it".
+
+CMurphi compiler last modified date: Jan 31 2025
+Include files last modified date:    Nov 8 2016
+==========================================================================
+
+==========================================================================
+Caching Murphi Release 5.4.9.1
+Finite-state Concurrent System Verifier.
+
+Caching Murphi Release 5.4.9.1 is based on various versions of Murphi.
+Caching Murphi Release 5.4.9.1 :
+Copyright (C) 2009-2012 by Sapienza University of Rome.
+Murphi release 3.1 :
+Copyright (C) 1992 - 1999 by the Board of Trustees of
+Leland Stanford Junior University.
+
+==========================================================================
+
+Protocol: past_builds/VI_buggy_build/s1_2_transition/out/P_V_P_IVD
+
+Algorithm:
+	Verification by breadth first search.
+	with symmetry algorithm 3 -- Heuristic Small Memory Normalization
+	with permutation trial limit 10.
+
+Memory usage:
+
+	* The size of each state is 392 bits (rounded up to 56 bytes).
+	* The memory allocated for the hash table and state queue is
+	  68719 Mbytes.
+	  With two words of overhead per state, the maximum size of
+	  the state space is 1060485761 states.
+	   * Use option "-k" or "-m" to increase this, if necessary.
+	* Capacity in queue for breadth-first search: 106048576 states.
+	   * Change the constant gPercentActiveStates in mu_prolog.inc
+	     to increase this, if necessary.
+
+Progress Report:
+
+	1000 states explored in 40.88s, with 3662 rules fired and 323 states in the queue.
+	2000 states explored in 40.88s, with 7455 rules fired and 390 states in the queue.
+	3000 states explored in 40.89s, with 12176 rules fired and 384 states in the queue.
+	4000 states explored in 40.89s, with 14802 rules fired and 977 states in the queue.
+	5000 states explored in 40.90s, with 18310 rules fired and 1377 states in the queue.
+	6000 states explored in 40.92s, with 22526 rules fired and 1606 states in the queue.
+	7000 states explored in 40.93s, with 28255 rules fired and 1403 states in the queue.
+	8000 states explored in 40.94s, with 35722 rules fired and 403 states in the queue.
+	9000 states explored in 40.94s, with 38029 rules fired and 835 states in the queue.
+	10000 states explored in 40.95s, with 40695 rules fired and 1250 states in the queue.
+	11000 states explored in 40.95s, with 44373 rules fired and 1432 states in the queue.
+	12000 states explored in 40.96s, with 48835 rules fired and 1420 states in the queue.
+	13000 states explored in 40.97s, with 55384 rules fired and 914 states in the queue.
+	14000 states explored in 40.97s, with 61505 rules fired and 604 states in the queue.
+	15000 states explored in 40.98s, with 64598 rules fired and 1093 states in the queue.
+	16000 states explored in 40.99s, with 68008 rules fired and 1426 states in the queue.
+	17000 states explored in 40.99s, with 71865 rules fired and 1624 states in the queue.
+	18000 states explored in 41.00s, with 76782 rules fired and 1557 states in the queue.
+	19000 states explored in 41.02s, with 84414 rules fired and 732 states in the queue.
+	20000 states explored in 41.03s, with 89537 rules fired and 468 states in the queue.
+	21000 states explored in 41.04s, with 93720 rules fired and 78 states in the queue.
+
+==========================================================================
+
+Status:
+
+	No error found.
+
+State Space Explored:
+
+	21766 states, 97472 rules fired in 41.04s.
+
+Analysis of State Space:
+
+	There are rules that are never fired.
+	If you are running with symmetry, this may be why.  Otherwise,
+	please run this program with "-pr" for the rules information.
+Time: 44.97 seconds

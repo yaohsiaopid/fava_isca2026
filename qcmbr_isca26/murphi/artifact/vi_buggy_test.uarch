@@ -1,0 +1,723 @@
+StageName 0 "CReq".
+VTStageName 1 0 "cc_P_I_1".
+StageName 2 "cc_P_I_lst".
+VTStageName 3 1 "cc_P_IVD_1".
+StageName 4 "cc_P_IVD_lst".
+VTStageName 5 2 "cc_P_V_1".
+StageName 6 "cc_P_V_lst".
+StageName 7 "out_c_GetMsg".
+StageName 8 "out_h_GetMsg".
+StageName 9 "in_c_GetMsg".
+VTStageName 10 3 "out_h_PutMsg".
+VTStageName 11 4 "out_c_DataRespMsg".
+VTStageName 12 5 "in_h_DataRespMsg".
+VTStageName 13 6 "in_c_DataRespMsg".
+VTStageName 14 7 "h_H_I_1".
+StageName 15 "h_H_I_lst".
+VTStageName 16 8 "h_H_V_1".
+StageName 17 "h_H_V_lst".
+StageName 18 "h_in_GetMsg".
+VTStageName 19 9 "h_in_PutMsg".
+VTStageName 20 10 "h_out_DataRespMsg".
+StageName 21 "MResp".
+StageName 22 "h_case_0".
+StageName 23 "h_case_1".
+StageName 24 "case_0".
+StageName 25 "case_1".
+StageName 26 "case_2".
+
+DefineMacro "postfix_case_P_V_GetMsg_core":
+(exists microop "i", SamePhysicalAddress i j /\ ~SameCore i j /\ AddEdge ((i, out_c_GetMsg), (j, in_c_GetMsg), "postfix_trigger", "black"))/\ 
+AssocValEqCmp (j, cc_P_V_1) (j, cc_P_I_1)/\ 
+AssocValEqCmp (j, cc_P_V_1) (j, out_c_DataRespMsg)/\ 
+AddEdges[((j, cc_P_V_1), (j, in_c_GetMsg), "postfix_path", "black"); 
+((j, in_c_GetMsg), (j, cc_P_V_lst), "postfix_path", "black"); 
+((j, cc_P_V_lst), (j, cc_P_I_1), "postfix_path", "black"); 
+((j, cc_P_I_1), (j, out_c_DataRespMsg), "postfix_path", "black"); 
+((j, out_c_DataRespMsg), (j, cc_P_I_lst), "postfix_path", "black")]/\ 
+
+~(exists microop "r", SameCore r j /\ ~SameMicroop r j /\ SamePhysicalAddress r j /\ ~AccessType InitAcc r /\ (
+(EdgeExists ((j, cc_P_V_lst), (r, cc_P_I_1), "inter") /\ EdgeExists ((r, cc_P_I_1), (j, cc_P_I_1),  "inter")) \/ 
+(EdgeExists ((j, cc_P_V_lst), (r, cc_P_V_1), "inter") /\ EdgeExists ((r, cc_P_V_1), (j, cc_P_I_1),  "inter"))))
+.
+
+DefineMacro "h_case_H_I_GetMsg_0":
+AddEdge ((i, out_h_GetMsg), (i, (0, h_in_GetMsg)), "stitch_h_c", "black") /\ 
+AddEdge ((i, (0, h_in_GetMsg)), (i, (0, h_H_V_1)), "home_upath", "black") /\ 
+AddEdge ((i, (0, h_H_V_1)), (i, (0, h_out_DataRespMsg)), "", "black") /\ 
+AddEdge ((i, (0, h_out_DataRespMsg)), (i, in_h_DataRespMsg), "stitch_h_c", "black") /\ 
+AssocValEqCmp (i, in_h_DataRespMsg) (i, (0, h_out_DataRespMsg)) /\ 
+AddEdge ((i, (0, h_out_DataRespMsg)), (i, (0, h_H_V_lst)), "", "black") /\ 
+AddEdge ((i, (0, h_H_V_1)), (i, (0, h_H_V_lst)), "", "black") /\ 
+~NodeExists (i, (0, h_H_I_1))/\ ~NodeExists (i, (0, h_H_I_lst))/\ ~NodeExists (i, (0, h_in_PutMsg)) /\ AddEdge ((i, CReq), (i, h_case_0), "case", "black")/\ ~NodeExists (i, h_case_1).
+
+DefineMacro "h_case_H_V_PutMsg_1":
+AddEdge ((i, out_h_PutMsg), (i, (0, h_in_PutMsg)), "stitch_h_c", "black") /\ 
+AssocValEqCmp (i, out_h_PutMsg) (i, (0, h_in_PutMsg)) /\ 
+AddEdge ((i, (0, h_in_PutMsg)), (i, (0, h_H_I_1)), "home_upath", "black") /\ 
+AssocValEqCmp (i, (0, h_in_PutMsg)) (i, (0, h_H_I_1)) /\ 
+AddEdge ((i, (0, h_H_I_1)), (i, (0, h_H_I_lst)), "", "black") /\ 
+~NodeExists (i, (0, h_H_V_1))/\ ~NodeExists (i, (0, h_H_V_lst))/\ ~NodeExists (i, (0, h_in_GetMsg))/\ ~NodeExists (i, (0, h_out_DataRespMsg)) /\ AddEdge ((i, CReq), (i, h_case_1), "case", "black")/\ ~NodeExists (i, h_case_0).
+
+DefineMacro "h_empty_case":
+~NodeExists (i, h_case_0)/\ ~NodeExists (i, h_case_1) /\ ~NodeExists (i, (0, h_H_I_1)) /\ ~NodeExists (i, (0, h_H_I_lst)) /\ ~NodeExists (i, (0, h_H_V_1)) /\ ~NodeExists (i, (0, h_H_V_lst)) /\ ~NodeExists (i, (0, h_in_GetMsg)) /\ ~NodeExists (i, (0, h_in_PutMsg)) /\ ~NodeExists (i, (0, h_out_DataRespMsg)).
+
+
+DefineMacro "c_case_ci_load_0":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+~NodeExists (i, cc_P_I_1) /\ ~NodeExists (i, cc_P_I_lst) /\ ~NodeExists (i, cc_P_IVD_1) /\ ~NodeExists (i, cc_P_IVD_lst) /\ ~NodeExists (i, cc_P_V_1) /\ ~NodeExists (i, cc_P_V_lst) /\ ~NodeExists (i, in_c_DataRespMsg) /\ ~NodeExists (i, in_c_GetMsg) /\ ~NodeExists (i, in_h_DataRespMsg) /\ ~NodeExists (i, out_c_DataRespMsg) /\ ~NodeExists (i, out_c_GetMsg) /\ ~NodeExists (i, out_h_GetMsg) /\ ~NodeExists (i, out_h_PutMsg).
+
+DefineMacro "c_case_ci_load_1":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AddEdges[((i, CReq), (i, cc_P_IVD_1), "to_picl_msg", "black"); 
+((i, cc_P_IVD_1), (i, out_c_GetMsg), "to_picl_msg", "black"); 
+((i, out_c_GetMsg), (i, in_c_DataRespMsg), "to_picl_msg", "black"); 
+((i, in_c_DataRespMsg), (i, cc_P_IVD_lst), "to_picl_msg", "black"); 
+((i, cc_P_IVD_lst), (i, cc_P_V_1), "to_picl_msg", "black"); 
+((i, cc_P_V_1), (i, MResp), "to_picl_msg", "black"); 
+((i, MResp), (i, cc_P_V_lst), "to_picl_msg", "black")] /\ 
+~NodeExists (i, in_h_DataRespMsg)/\ ~NodeExists (i, out_h_GetMsg)/\ ~NodeExists (i, out_h_PutMsg) /\ 
+AssocValEqCmp (i, cc_P_V_1) (i, in_c_DataRespMsg) /\ 
+AssocValEqDataOfI (i, cc_P_V_1) i.
+
+DefineMacro "c_case_ci_load_2":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AddEdges[((i, CReq), (i, cc_P_IVD_1), "to_picl_msg", "black"); 
+((i, cc_P_IVD_1), (i, out_h_GetMsg), "to_picl_msg", "black"); 
+((i, out_h_GetMsg), (i, in_h_DataRespMsg), "to_picl_msg", "black"); 
+((i, in_h_DataRespMsg), (i, cc_P_IVD_lst), "to_picl_msg", "black"); 
+((i, cc_P_IVD_lst), (i, cc_P_V_1), "to_picl_msg", "black"); 
+((i, cc_P_V_1), (i, MResp), "to_picl_msg", "black"); 
+((i, MResp), (i, cc_P_V_lst), "to_picl_msg", "black")] /\ 
+~NodeExists (i, in_c_DataRespMsg)/\ ~NodeExists (i, out_c_GetMsg)/\ ~NodeExists (i, out_h_PutMsg) /\ 
+AssocValEqCmp (i, cc_P_V_1) (i, in_h_DataRespMsg) /\ 
+AssocValEqDataOfI (i, cc_P_V_1) i.
+
+DefineMacro "c_case_ci_store_0":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AssocValEqDataOfI (i, cc_P_V_1) i /\ 
+AddEdge ((i, CReq), (i, cc_P_V_1), "", "black") /\ 
+AddEdge ((i, cc_P_V_1), (i, cc_P_V_lst), "", "black") /\ 
+~NodeExists (i, cc_P_IVD_1)/\ ~NodeExists (i, cc_P_IVD_lst)/\ ~NodeExists (i, in_c_DataRespMsg)/\ ~NodeExists (i, in_h_DataRespMsg)/\ ~NodeExists (i, out_c_GetMsg)/\ ~NodeExists (i, out_h_GetMsg)/\ ~NodeExists (i, out_h_PutMsg).
+
+DefineMacro "c_case_ci_store_1":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AddEdges[((i, CReq), (i, cc_P_IVD_1), "to_picl_msg", "black"); 
+((i, cc_P_IVD_1), (i, out_c_GetMsg), "to_picl_msg", "black"); 
+((i, out_c_GetMsg), (i, in_c_DataRespMsg), "to_picl_msg", "black"); 
+((i, in_c_DataRespMsg), (i, cc_P_IVD_lst), "to_picl_msg", "black"); 
+((i, cc_P_IVD_lst), (i, cc_P_V_1), "to_picl_msg", "black"); 
+((i, cc_P_V_1), (i, MResp), "to_picl_msg", "black"); 
+((i, MResp), (i, cc_P_V_lst), "to_picl_msg", "black")] /\ 
+~NodeExists (i, in_h_DataRespMsg)/\ ~NodeExists (i, out_h_GetMsg)/\ ~NodeExists (i, out_h_PutMsg) /\ 
+AssocValEqDataOfI (i, cc_P_IVD_1) i /\ 
+AssocValEqCmp (i, cc_P_V_1) (i, in_c_DataRespMsg).
+
+DefineMacro "c_case_ci_store_2":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AddEdges[((i, CReq), (i, cc_P_IVD_1), "to_picl_msg", "black"); 
+((i, cc_P_IVD_1), (i, out_h_GetMsg), "to_picl_msg", "black"); 
+((i, out_h_GetMsg), (i, in_h_DataRespMsg), "to_picl_msg", "black"); 
+((i, in_h_DataRespMsg), (i, cc_P_IVD_lst), "to_picl_msg", "black"); 
+((i, cc_P_IVD_lst), (i, cc_P_V_1), "to_picl_msg", "black"); 
+((i, cc_P_V_1), (i, MResp), "to_picl_msg", "black"); 
+((i, MResp), (i, cc_P_V_lst), "to_picl_msg", "black")] /\ 
+~NodeExists (i, in_c_DataRespMsg)/\ ~NodeExists (i, out_c_GetMsg)/\ ~NodeExists (i, out_h_PutMsg) /\ 
+AssocValEqDataOfI (i, cc_P_IVD_1) i /\ 
+AssocValEqCmp (i, cc_P_V_1) (i, in_h_DataRespMsg).
+
+DefineMacro "c_case_ci_evict_0":
+AddEdge ((i, CReq), (i, MResp), "", "black") /\ 
+AddEdges[((i, CReq), (i, cc_P_I_1), "to_picl_msg", "black"); 
+((i, cc_P_I_1), (i, MResp), "to_picl_msg", "black"); 
+((i, cc_P_I_1), (i, out_h_PutMsg), "to_picl_msg", "black"); 
+((i, MResp), (i, cc_P_I_lst), "to_picl_msg", "black"); 
+((i, out_h_PutMsg), (i, cc_P_I_lst), "to_picl_msg", "black")] /\ 
+~NodeExists (i, cc_P_IVD_1)/\ ~NodeExists (i, cc_P_IVD_lst)/\ ~NodeExists (i, cc_P_V_1)/\ ~NodeExists (i, cc_P_V_lst)/\ ~NodeExists (i, in_c_DataRespMsg)/\ ~NodeExists (i, in_h_DataRespMsg)/\ ~NodeExists (i, out_c_GetMsg)/\ ~NodeExists (i, out_h_GetMsg).
+
+DefineMacro "c_case_ci_evict_1":
+AddEdge ((i, CReq), (i, MResp), "evict_nop", "black") /\ 
+~NodeExists (i, cc_P_I_1) /\ ~NodeExists (i, cc_P_I_lst) /\ ~NodeExists (i, cc_P_IVD_1) /\ ~NodeExists (i, cc_P_IVD_lst) /\ ~NodeExists (i, cc_P_V_1) /\ ~NodeExists (i, cc_P_V_lst) /\ ~NodeExists (i, in_c_DataRespMsg) /\ ~NodeExists (i, in_c_GetMsg) /\ ~NodeExists (i, in_h_DataRespMsg) /\ ~NodeExists (i, out_c_DataRespMsg) /\ ~NodeExists (i, out_c_GetMsg) /\ ~NodeExists (i, out_h_GetMsg) /\ ~NodeExists (i, out_h_PutMsg).
+
+DefineMacro "c_case_label_0":
+AddEdge ((i, CReq), (i, case_0), "case", "black") /\ 
+~NodeExists (i, case_1) /\ ~NodeExists (i, case_2) .
+
+DefineMacro "c_case_label_1":
+AddEdge ((i, CReq), (i, case_1), "case", "black") /\ 
+~NodeExists (i, case_0) /\ ~NodeExists (i, case_2) .
+
+DefineMacro "c_case_label_2":
+AddEdge ((i, CReq), (i, case_2), "case", "black") /\ 
+~NodeExists (i, case_0) /\ ~NodeExists (i, case_1) .
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LOCAL INITIAL STATE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "ci_load_upath_0_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i) => 
+  NodeExists (i, case_0) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_V_1), (q, cc_P_V_lst), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1))) /\ 
+AddEdge ((q, cc_P_V_1), (i, CReq), "", "black") /\ 
+AddEdge ((i, MResp), (q, cc_P_V_lst), "", "black") /\ 
+AssocValEqDataOfI (q, cc_P_V_1) i
+  ).
+
+
+
+Axiom "ci_load_upath_1_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i) => 
+  NodeExists (i, case_1) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_I_1), (q, cc_P_I_lst), "", "black") /\ 
+AddEdge ((q, cc_P_I_lst), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1))) /\ 
+AssocValEqCmp (q, cc_P_I_1) (i, cc_P_IVD_1)
+  ).
+
+
+
+Axiom "ci_load_upath_2_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i) => 
+  NodeExists (i, case_2) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_I_1), (q, cc_P_I_lst), "", "black") /\ 
+AddEdge ((q, cc_P_I_lst), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1))) /\ 
+AssocValEqCmp (q, cc_P_I_1) (i, cc_P_IVD_1)
+  ).
+
+
+
+Axiom "ci_store_upath_0_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i) => 
+  NodeExists (i, case_0) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_V_1), (q, cc_P_V_lst), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1))) /\ 
+~NodeExists (q, cc_P_I_1) /\ 
+AddEdge ((q, cc_P_V_lst), (i, CReq), "", "black")
+  ).
+
+
+
+Axiom "ci_store_upath_1_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i) => 
+  NodeExists (i, case_1) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_I_1), (q, cc_P_I_lst), "", "black") /\ 
+AddEdge ((q, cc_P_I_lst), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1)))
+  ).
+
+
+
+Axiom "ci_store_upath_2_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i) => 
+  NodeExists (i, case_2) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_I_1), (q, cc_P_I_lst), "", "black") /\ 
+AddEdge ((q, cc_P_I_lst), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1)))
+  ).
+
+
+
+Axiom "ci_evict_upath_0_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ AccessType Evict i /\ IsAnyWrite i) => 
+  NodeExists (i, case_0) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_V_1), (q, cc_P_V_lst), "", "black") /\ 
+AddEdge ((q, cc_P_V_lst), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1))) /\ 
+~NodeExists (q, cc_P_I_1) /\ 
+AssocValEqCmp (q, cc_P_V_1) (i, cc_P_I_1) /\ 
+AssocValEqCmp (i, out_h_PutMsg) (q, cc_P_V_1)
+  ).
+
+
+
+Axiom "ci_evict_upath_1_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ AccessType Evict i /\ IsAnyWrite i) => 
+  NodeExists (i, case_1) => 
+  (exists microop "q", ProgramOrder q i /\ SamePhysicalAddress q i /\
+  AddEdge ((q, cc_P_I_1), (q, cc_P_I_lst), "evict_nop", "black") /\ 
+AddEdge ((q, cc_P_I_1), (i, CReq), "", "black") /\ 
+~(exists microop "r", ProgramOrder q r /\ ProgramOrder r i /\ SamePhysicalAddress q r /\ 
+ (NodeExists (r, cc_P_I_1) \/ NodeExists (r, cc_P_V_1)))
+  ).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END LOCAL INITIAL STATE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HOME INITIAL STATE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "ci_load_upath_2_home_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i) => 
+  % core case 
+  NodeExists (i, case_2) => 
+  % home case 
+  NodeExists (i, h_case_0) => 
+  (exists microop "k", ~SameMicroop k i /\ SamePhysicalAddress k i /\ 
+  
+  AddEdge ((k, (0, h_H_I_1)), (k, (0, h_H_I_lst)), "", "black") /\ 
+AddEdge ((k, (0, h_H_I_lst)), (i, (0, h_in_GetMsg)), "", "black") /\ 
+~(exists microop "q",  ~SameMicroop q k /\ SamePhysicalAddress q k /\  ~SameMicroop q i /\ 
+ ((EdgeExists ((k, (0, h_H_I_lst)), (q, (0, h_H_I_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_I_1)), (i, (0, h_H_V_1)), "inter_", "black")) \/ 
+(EdgeExists ((k, (0, h_H_I_lst)), (q, (0, h_H_V_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_V_1)), (i, (0, h_H_V_1)), "inter_", "black")))) /\ 
+AssocValEqCmp (i, (0, h_H_V_1)) (k, (0, h_H_I_1)) /\ 
+AssocValEqCmp (k, (0, h_H_I_1)) (i, (0, h_out_DataRespMsg))
+  ).
+
+
+
+Axiom "ci_store_upath_2_home_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i) => 
+  % core case 
+  NodeExists (i, case_2) => 
+  % home case 
+  NodeExists (i, h_case_0) => 
+  (exists microop "k", ~SameMicroop k i /\ SamePhysicalAddress k i /\ 
+  
+  AddEdge ((k, (0, h_H_I_1)), (k, (0, h_H_I_lst)), "", "black") /\ 
+AddEdge ((k, (0, h_H_I_lst)), (i, (0, h_in_GetMsg)), "", "black") /\ 
+~(exists microop "q",  ~SameMicroop q k /\ SamePhysicalAddress q k /\  ~SameMicroop q i /\ 
+ ((EdgeExists ((k, (0, h_H_I_lst)), (q, (0, h_H_I_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_I_1)), (i, (0, h_H_V_1)), "inter_", "black")) \/ 
+(EdgeExists ((k, (0, h_H_I_lst)), (q, (0, h_H_V_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_V_1)), (i, (0, h_H_V_1)), "inter_", "black")))) /\ 
+AssocValEqCmp (i, (0, h_H_V_1)) (k, (0, h_H_I_1)) /\ 
+AssocValEqCmp (k, (0, h_H_I_1)) (i, (0, h_out_DataRespMsg))
+  ).
+
+
+
+Axiom "ci_evict_upath_0_home_initial_state":
+  forall microop "i", OnCore c i => (~AccessType InitAcc i /\ AccessType Evict i /\ IsAnyWrite i) => 
+  % core case 
+  NodeExists (i, case_0) => 
+  % home case 
+  NodeExists (i, h_case_1) => 
+  (exists microop "k", ~SameMicroop k i /\ SamePhysicalAddress k i /\ 
+  
+  AddEdge ((k, (0, h_H_V_1)), (k, (0, h_H_V_lst)), "", "black") /\ 
+AddEdge ((k, (0, h_H_V_lst)), (i, (0, h_in_PutMsg)), "", "black") /\ 
+~(exists microop "q",  ~SameMicroop q k /\ SamePhysicalAddress q k /\  ~SameMicroop q i /\ 
+ ((EdgeExists ((k, (0, h_H_V_lst)), (q, (0, h_H_I_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_I_1)), (i, (0, h_H_I_1)), "inter_", "black")) \/ 
+(EdgeExists ((k, (0, h_H_V_lst)), (q, (0, h_H_V_1)), "inter_", "black") /\ 
+ EdgeExists ((q, (0, h_H_V_1)), (i, (0, h_H_I_1)), "inter_", "black"))))
+  ).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END HOME INITIAL STATE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CORE UPATH PATH 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Axiom "ci_load_upath":
+forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i)=>
+ ((ExpandMacro h_empty_case /\ 
+ExpandMacro c_case_ci_load_0 /\ 
+ExpandMacro c_case_label_0 
+) \/ 
+ (ExpandMacro h_empty_case /\ 
+ExpandMacro c_case_ci_load_1 /\ 
+ExpandMacro c_case_label_1 
+) \/ 
+ ((( ExpandMacro h_case_H_I_GetMsg_0  )) /\ 
+ExpandMacro c_case_ci_load_2 /\ 
+ExpandMacro c_case_label_2 
+)).
+
+Axiom "ci_store_upath":
+forall microop "i", OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i)=>
+ ((ExpandMacro h_empty_case /\ 
+ExpandMacro c_case_ci_store_0 /\ 
+ExpandMacro c_case_label_0 
+) \/ 
+ (ExpandMacro h_empty_case /\ 
+ExpandMacro c_case_ci_store_1 /\ 
+ExpandMacro c_case_label_1 
+) \/ 
+ ((( ExpandMacro h_case_H_I_GetMsg_0  )) /\ 
+ExpandMacro c_case_ci_store_2 /\ 
+ExpandMacro c_case_label_2 
+)).
+
+Axiom "ci_evict_upath":
+forall microop "i", OnCore c i => (~AccessType InitAcc i /\ AccessType Evict i /\ IsAnyWrite i)=>
+ (((( ExpandMacro h_case_H_V_PutMsg_1  )) /\ 
+ExpandMacro c_case_ci_evict_0 /\ 
+ExpandMacro c_case_label_0 
+) \/ 
+ (ExpandMacro h_empty_case /\ 
+ExpandMacro c_case_ci_evict_1 /\ 
+ExpandMacro c_case_label_1 
+)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END CORE PATH 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% POSTFIX PATH 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "ci_load_upath_1_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ ~AccessType Evict j /\ IsAnyRead j) => 
+  NodeExists (j, case_1) => (
+  ExpandMacro postfix_case_P_V_GetMsg_core\/ 
+(~NodeExists (j, cc_P_I_1)/\ 
+ ~NodeExists (j, cc_P_I_lst)/\ 
+ ~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+
+Axiom "ci_load_upath_2_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ ~AccessType Evict j /\ IsAnyRead j) => 
+  NodeExists (j, case_2) => (
+  ExpandMacro postfix_case_P_V_GetMsg_core\/ 
+(~NodeExists (j, cc_P_I_1)/\ 
+ ~NodeExists (j, cc_P_I_lst)/\ 
+ ~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+
+Axiom "ci_store_upath_0_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ ~AccessType Evict j /\ IsAnyWrite j) => 
+  NodeExists (j, case_0) => (
+  ExpandMacro postfix_case_P_V_GetMsg_core\/ 
+(~NodeExists (j, cc_P_I_1)/\ 
+ ~NodeExists (j, cc_P_I_lst)/\ 
+ ~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+
+Axiom "ci_store_upath_1_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ ~AccessType Evict j /\ IsAnyWrite j) => 
+  NodeExists (j, case_1) => (
+  ExpandMacro postfix_case_P_V_GetMsg_core\/ 
+(~NodeExists (j, cc_P_I_1)/\ 
+ ~NodeExists (j, cc_P_I_lst)/\ 
+ ~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+
+Axiom "ci_store_upath_2_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ ~AccessType Evict j /\ IsAnyWrite j) => 
+  NodeExists (j, case_2) => (
+  ExpandMacro postfix_case_P_V_GetMsg_core\/ 
+(~NodeExists (j, cc_P_I_1)/\ 
+ ~NodeExists (j, cc_P_I_lst)/\ 
+ ~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+
+Axiom "ci_evict_upath_0_postfix_possibility":
+forall microop "j", OnCore c j => (~AccessType InitAcc j /\ AccessType Evict j /\ IsAnyWrite j) => 
+  NodeExists (j, case_0) => (
+  (~NodeExists (j, in_c_GetMsg)/\ 
+ ~NodeExists (j, out_c_DataRespMsg))
+  ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END POSTFIX PATH 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CORE MODEL 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "one_req_simple_core_across_all_addresses_at_a_time":
+  forall microop "i", forall microop "j",
+  SameCore i j /\
+  ~(AccessType InitAcc i /\ AccessType InitAcc j) /\
+  ProgramOrder i j =>
+    AddEdge ((i, MResp), (j, CReq), "single_req", "black").
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FINAL STATE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "final_state_check_H_I":
+forall microop "i", 
+  NodeExists (i, (0, h_H_I_1))  =>
+  % or i is final then its value match
+  IsFinalDefined i => 
+  AssocValEqFinalDataAtPA (i, (0, h_H_I_1)) i \/  
+    % not i is final -> exists some j such that 
+    (exists microop "j", SamePhysicalAddress i j /\ ~SameMicroop i j /\
+     (( NodeExists (j, (0, h_H_I_1)) /\ EdgeExists ((i, (0, h_H_I_1)), (j, (0, h_H_I_1)), "i_not_final")) \/ 
+( NodeExists (j, (0, h_H_V_1)) /\ EdgeExists ((i, (0, h_H_I_1)), (j, (0, h_H_V_1)), "i_not_final"))) 
+    ).
+
+Axiom "final_state_check_H_V":
+forall microop "i", 
+  NodeExists (i, (0, h_H_V_1))  =>
+  % or i is final then its value match
+  IsFinalDefined i => 
+  AssocValEqFinalDataAtPA (i, (0, h_H_V_1)) i \/  
+    % not i is final -> exists some j such that 
+    (exists microop "j", SamePhysicalAddress i j /\ ~SameMicroop i j /\
+     (( NodeExists (j, (0, h_H_I_1)) /\ EdgeExists ((i, (0, h_H_V_1)), (j, (0, h_H_I_1)), "i_not_final")) \/ 
+( NodeExists (j, (0, h_H_V_1)) /\ EdgeExists ((i, (0, h_H_V_1)), (j, (0, h_H_V_1)), "i_not_final"))) 
+    ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INIT ACC 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "initacc_path": 
+  forall microop "i", AccessType InitAcc i =>
+  (AddEdge ((i, cc_P_I_1), (i, cc_P_I_lst), "init", "black") /\ 
+AssocValEqDataOfI (i, cc_P_I_1) i /\ 
+~NodeExists (i, CReq) /\ 
+~NodeExists (i, cc_P_IVD_1) /\ 
+~NodeExists (i, cc_P_IVD_lst) /\ 
+~NodeExists (i, cc_P_V_1) /\ 
+~NodeExists (i, cc_P_V_lst) /\ 
+~NodeExists (i, in_c_DataRespMsg) /\ 
+~NodeExists (i, in_h_DataRespMsg) /\ 
+~NodeExists (i, out_c_GetMsg) /\ 
+~NodeExists (i, out_h_GetMsg) /\ 
+~NodeExists (i, out_h_PutMsg)) \/ 
+(AddEdge ((i, cc_P_V_1), (i, cc_P_V_lst), "init", "black") /\ 
+AssocValEqDataOfI (i, cc_P_V_1) i /\ 
+~NodeExists (i, CReq) /\ 
+~NodeExists (i, cc_P_IVD_1) /\ 
+~NodeExists (i, cc_P_IVD_lst) /\ 
+~NodeExists (i, cc_P_I_1) /\ 
+~NodeExists (i, cc_P_I_lst) /\ 
+~NodeExists (i, in_c_DataRespMsg) /\ 
+~NodeExists (i, in_h_DataRespMsg) /\ 
+~NodeExists (i, out_c_GetMsg) /\ 
+~NodeExists (i, out_h_GetMsg) /\ 
+~NodeExists (i, out_h_PutMsg) /\ 
+(AddEdge ((i, (0, h_H_V_1)), (i, cc_P_V_1), "init_home_core", "black") /\ 
+AddEdge ((i, (0, h_H_V_1)), (i, (0, h_H_V_lst)), "init_home_core", "black"))). 
+
+Axiom "initacc_no_txn": 
+  forall microop "i", AccessType InitAcc i =>
+  ~NodeExists (i, (0, h_in_GetMsg)) /\ ~NodeExists (i, (0, h_in_PutMsg)) /\ ~NodeExists (i, (0, h_out_DataRespMsg)) /\ ~NodeExists (i, case_0) /\ ~NodeExists (i, case_1) /\ ~NodeExists (i, case_2) /\ ~NodeExists (i, h_case_0) /\ ~NodeExists (i, h_case_1) /\ ~NodeExists (i, in_c_DataRespMsg) /\ ~NodeExists (i, in_c_GetMsg) /\ ~NodeExists (i, in_h_DataRespMsg) /\ ~NodeExists (i, out_c_DataRespMsg) /\ ~NodeExists (i, out_c_GetMsg) /\ ~NodeExists (i, out_h_GetMsg) /\ ~NodeExists (i, out_h_PutMsg). 
+
+Axiom "initacc_path_home": 
+  forall microop "i", AccessType InitAcc i =>
+  ExpandMacro h_empty_case \/ 
+(AddEdge ((i, (0, h_H_I_1)), (i, (0, h_H_I_lst)), "init_home_level", "black") /\ 
+AssocValEqDataOfI (i, (0, h_H_I_1)) i /\ 
+~NodeExists (i, (0, h_H_V_1)) /\ 
+~NodeExists (i, (0, h_H_V_lst)) /\ 
+~NodeExists (i, (0, h_in_GetMsg)) /\ 
+~NodeExists (i, (0, h_in_PutMsg)) /\ 
+~NodeExists (i, (0, h_out_DataRespMsg))) \/ 
+(AddEdge ((i, (0, h_H_V_1)), (i, (0, h_H_V_lst)), "init_home_level", "black") /\ 
+AssocValEqDataOfI (i, (0, h_H_V_1)) i /\ 
+~NodeExists (i, (0, h_H_I_1)) /\ 
+~NodeExists (i, (0, h_H_I_lst)) /\ 
+~NodeExists (i, (0, h_in_GetMsg)) /\ 
+~NodeExists (i, (0, h_in_PutMsg)) /\ 
+~NodeExists (i, (0, h_out_DataRespMsg))). 
+Axiom "init_state_home_exclusive": 
+forall microop "i", forall microop "j", AccessType InitAcc i /\ AccessType InitAcc j /\ 
+~SameMicroop i j /\ SamePhysicalAddress i j =>
+ NodeExists (i, (0, h_H_I_1)) \/ NodeExists (i, (0, h_H_V_1)) =>
+ ~NodeExists (j, (0, h_H_I_1)) /\ ~NodeExists (j, (0, h_H_V_1)).
+Axiom "init_state_P_V_imp_others": forall microop "i", forall microop "j", AccessType InitAcc i /\ AccessType InitAcc j => 
+ ~SameMicroop i j /\ SamePhysicalAddress i j => 
+ NodeExists (i, cc_P_V_1) => 
+ ~NodeExists (j, cc_P_V_1). 
+
+Axiom "msg_match_core_ci_load_1_0":
+forall microop "i", 
+  OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyRead i) =>
+  NodeExists (i, case_1) =>
+  ( % exists the one that responds
+    exists microop "j",
+    ~SameCore i j /\  SamePhysicalAddress i j /\
+    AddEdge ((j, out_c_DataRespMsg), (i, in_c_DataRespMsg), "match", "black")/\ 
+AssocValEqCmp (j, out_c_DataRespMsg) (i, in_c_DataRespMsg)/\ 
+AddEdge ((i, out_c_GetMsg), (j, in_c_GetMsg), "match", "black")
+  ).
+
+Axiom "msg_match_core_ci_store_1_0":
+forall microop "i", 
+  OnCore c i => (~AccessType InitAcc i /\ ~AccessType Evict i /\ IsAnyWrite i) =>
+  NodeExists (i, case_1) =>
+  ( % exists the one that responds
+    exists microop "j",
+    ~SameCore i j /\  SamePhysicalAddress i j /\
+    AddEdge ((j, out_c_DataRespMsg), (i, in_c_DataRespMsg), "match", "black")/\ 
+AssocValEqCmp (j, out_c_DataRespMsg) (i, in_c_DataRespMsg)/\ 
+AddEdge ((i, out_c_GetMsg), (j, in_c_GetMsg), "match", "black")
+  ).
+
+Axiom "msg_in_GetMsg":
+forall microop "i", 
+  NodeExists (i, in_c_GetMsg) => 
+    exists microop "j", (
+    ~SameCore i j /\ SamePhysicalAddress i j /\ 
+    (EdgeExists ((j, out_c_GetMsg), (i, in_c_GetMsg), "com"))
+).
+
+
+Axiom "msg_out_out_c_GetMsg":
+forall microop "i", 
+  NodeExists (i, out_c_GetMsg) => 
+    exists microop "j", (
+    ~SameCore i j /\ SamePhysicalAddress i j /\ 
+    (EdgeExists ((i, out_c_GetMsg), (j, in_c_GetMsg), "com"))
+).
+
+
+Axiom "msg_in_DataRespMsg":
+forall microop "i", 
+  NodeExists (i, in_c_DataRespMsg) => 
+    exists microop "j", (
+    ~SameCore i j /\ SamePhysicalAddress i j /\ 
+    (EdgeExists ((j, out_c_DataRespMsg), (i, in_c_DataRespMsg), "com"))
+).
+
+
+Axiom "msg_out_out_c_DataRespMsg":
+forall microop "i", 
+  NodeExists (i, out_c_DataRespMsg) => 
+    exists microop "j", (
+    ~SameCore i j /\ SamePhysicalAddress i j /\ 
+    (EdgeExists ((i, out_c_DataRespMsg), (j, in_c_DataRespMsg), "com"))
+).
+
+
+Axiom "mc_for_initacc_0":
+  forall microop "i", forall microop "j", 
+    AccessType InitAcc i /\ ~SameMicroop i j /\ SamePhysicalAddress i j => 
+      NodeExists (i, (0, h_H_I_1)) /\ NodeExists (j, (0, h_H_I_1)) =>
+      EdgeExists ((i, (0, h_H_I_lst)), (j, (0, h_H_I_1)), "i_mc_precdeall").
+
+Axiom "mc_for_po_1":
+forall microop "i", forall microop "j",
+ProgramOrder i j /\ SamePhysicalAddress i j  => 
+NodeExists (i, (0, h_H_I_1)) /\ NodeExists (j, (0, h_H_I_1)) =>
+EdgeExists ((i, (0, h_H_I_lst)), (j, (0, h_H_I_1)), "mc_po").
+
+Axiom "mc_for_initacc_2":
+  forall microop "i", forall microop "j", 
+    AccessType InitAcc i /\ ~SameMicroop i j /\ SamePhysicalAddress i j => 
+      NodeExists (i, (0, h_H_I_1)) /\ NodeExists (j, (0, h_H_V_1)) =>
+      EdgeExists ((i, (0, h_H_I_lst)), (j, (0, h_H_V_1)), "i_mc_precdeall").
+
+Axiom "mc_for_po_3":
+forall microop "i", forall microop "j",
+ProgramOrder i j /\ SamePhysicalAddress i j  => 
+NodeExists (i, (0, h_H_I_1)) /\ NodeExists (j, (0, h_H_V_1)) =>
+EdgeExists ((i, (0, h_H_I_lst)), (j, (0, h_H_V_1)), "mc_po").
+
+Axiom "mc_for_initacc_4":
+  forall microop "i", forall microop "j", 
+    AccessType InitAcc i /\ ~SameMicroop i j /\ SamePhysicalAddress i j => 
+      NodeExists (i, (0, h_H_V_1)) /\ NodeExists (j, (0, h_H_I_1)) =>
+      EdgeExists ((i, (0, h_H_V_lst)), (j, (0, h_H_I_1)), "i_mc_precdeall").
+
+Axiom "mc_for_po_5":
+forall microop "i", forall microop "j",
+ProgramOrder i j /\ SamePhysicalAddress i j  => 
+NodeExists (i, (0, h_H_V_1)) /\ NodeExists (j, (0, h_H_I_1)) =>
+EdgeExists ((i, (0, h_H_V_lst)), (j, (0, h_H_I_1)), "mc_po").
+
+Axiom "mc_for_initacc_6":
+  forall microop "i", forall microop "j", 
+    AccessType InitAcc i /\ ~SameMicroop i j /\ SamePhysicalAddress i j => 
+      NodeExists (i, (0, h_H_V_1)) /\ NodeExists (j, (0, h_H_V_1)) =>
+      EdgeExists ((i, (0, h_H_V_lst)), (j, (0, h_H_V_1)), "i_mc_precdeall").
+
+Axiom "mc_for_po_7":
+forall microop "i", forall microop "j",
+ProgramOrder i j /\ SamePhysicalAddress i j  => 
+NodeExists (i, (0, h_H_V_1)) /\ NodeExists (j, (0, h_H_V_1)) =>
+EdgeExists ((i, (0, h_H_V_lst)), (j, (0, h_H_V_1)), "mc_po").
+
+Axiom "single_state_main_mem_0":
+forall microop "i", forall microop "j", 
+ ~SameMicroop i j /\ SamePhysicalAddress i j  =>
+NodeExists (i, (0, h_H_I_1)) /\ NodeExists (j, (0, h_H_V_1)) => 
+EdgeExists ((i, (0, h_H_I_lst)), (j, (0, h_H_V_1)), "one_way") \/
+EdgeExists ((j, (0, h_H_V_lst)), (i, (0, h_H_I_1)), "the_other").
+
+Axiom "single_state_main_mem_1":
+forall microop "i", forall microop "r", 
+SamePhysicalAddress i r /\ ~SameMicroop i r  =>
+EdgeExists ((i, (0, h_H_I_1)), (i, (0, h_H_I_lst)), "h", "black") =>  
+(EdgeExists ((r, (0, h_H_I_lst)), (i, (0, h_H_I_lst)), "inter_", "black") \/ 
+EdgeExists ((i, (0, h_H_I_lst)), (r, (0, h_H_I_1)), "inter_", "black") \/ 
+(~NodeExists (r, (0, h_H_I_1)) /\ ~NodeExists (r, (0, h_H_I_lst))) \/ 
+EdgeExists ((r, (0, h_H_V_lst)), (i, (0, h_H_I_lst)), "inter_", "black") \/ 
+EdgeExists ((i, (0, h_H_I_lst)), (r, (0, h_H_V_1)), "inter_", "black") \/ 
+(~NodeExists (r, (0, h_H_V_1)) /\ ~NodeExists (r, (0, h_H_V_lst)))).
+
+Axiom "single_state_main_mem_2":
+forall microop "i", forall microop "r", 
+SamePhysicalAddress i r /\ ~SameMicroop i r  =>
+EdgeExists ((i, (0, h_H_V_1)), (i, (0, h_H_V_lst)), "h", "black") =>  
+(EdgeExists ((r, (0, h_H_I_lst)), (i, (0, h_H_V_lst)), "inter_", "black") \/ 
+EdgeExists ((i, (0, h_H_V_lst)), (r, (0, h_H_I_1)), "inter_", "black") \/ 
+(~NodeExists (r, (0, h_H_I_1)) /\ ~NodeExists (r, (0, h_H_I_lst))) \/ 
+EdgeExists ((r, (0, h_H_V_lst)), (i, (0, h_H_V_lst)), "inter_", "black") \/ 
+EdgeExists ((i, (0, h_H_V_lst)), (r, (0, h_H_V_1)), "inter_", "black") \/ 
+(~NodeExists (r, (0, h_H_V_1)) /\ ~NodeExists (r, (0, h_H_V_lst)))).
+
+Axiom "total_order_cc_state_follows_program_order_0":
+forall microop "i", forall microop "j",  
+  ProgramOrder i j /\ SamePhysicalAddress i j =>
+  NodeExists (i, cc_P_I_1) /\ NodeExists (j, cc_P_I_1) =>
+  EdgeExists ((i, cc_P_I_lst), (j, cc_P_I_1), "total_order_PO").
+
+Axiom "total_order_cc_state_follows_program_order_1":
+forall microop "i", forall microop "j",  
+  ProgramOrder i j /\ SamePhysicalAddress i j =>
+  NodeExists (i, cc_P_I_1) /\ NodeExists (j, cc_P_V_1) =>
+  EdgeExists ((i, cc_P_I_lst), (j, cc_P_V_1), "total_order_PO").
+
+Axiom "total_order_cc_state_follows_program_order_2":
+forall microop "i", forall microop "j",  
+  ProgramOrder i j /\ SamePhysicalAddress i j =>
+  NodeExists (i, cc_P_V_1) /\ NodeExists (j, cc_P_I_1) =>
+  EdgeExists ((i, cc_P_V_lst), (j, cc_P_I_1), "total_order_PO").
+
+Axiom "total_order_cc_state_follows_program_order_3":
+forall microop "i", forall microop "j",  
+  ProgramOrder i j /\ SamePhysicalAddress i j =>
+  NodeExists (i, cc_P_V_1) /\ NodeExists (j, cc_P_V_1) =>
+  EdgeExists ((i, cc_P_V_lst), (j, cc_P_V_1), "total_order_PO").
+
+Axiom "total_order_cc_state_0":
+forall microop "i", forall microop "j", 
+SameCore i j /\ SamePhysicalAddress i j  /\ ~SameMicroop i j =>
+(NodeExists (i, cc_P_I_1) /\ NodeExists (j, cc_P_I_1)) => 
+EdgeExists ((i, cc_P_I_lst), (j, cc_P_I_1), "one_way") \/
+EdgeExists ((j, cc_P_I_lst), (i, cc_P_I_1), "the_other").
+
+Axiom "total_order_cc_state_1":
+forall microop "i", forall microop "j", 
+SameCore i j /\ SamePhysicalAddress i j  =>
+(NodeExists (i, cc_P_V_1) /\ NodeExists (j, cc_P_I_1)) => 
+EdgeExists ((i, cc_P_V_lst), (j, cc_P_I_1), "one_way") \/
+EdgeExists ((j, cc_P_I_lst), (i, cc_P_V_1), "the_other").
+
+Axiom "total_order_cc_state_2":
+forall microop "i", forall microop "j", 
+SameCore i j /\ SamePhysicalAddress i j  /\ ~SameMicroop i j =>
+(NodeExists (i, cc_P_V_1) /\ NodeExists (j, cc_P_V_1)) => 
+EdgeExists ((i, cc_P_V_lst), (j, cc_P_V_1), "one_way") \/
+EdgeExists ((j, cc_P_V_lst), (i, cc_P_V_1), "the_other").
