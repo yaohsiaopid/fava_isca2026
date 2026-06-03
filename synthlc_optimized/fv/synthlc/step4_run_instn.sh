@@ -125,6 +125,6 @@ fi
 
 # Post process HB property results
 cd ${INAME_DIR}/${DIR};
-python3 ${PYSCRPT}.py pp; 
+#python3 ${PYSCRPT}.py pp; 
 #python3 ${PYSCRPT}.py stats; 
 cd ../
