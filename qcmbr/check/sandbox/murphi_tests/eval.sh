@@ -12,6 +12,6 @@ fi
 
 if [ $1 == "view" ]; then
   ./mini.sh  ../../tests/coherence_augmented/coWR_1thd.test ../../../murphi/artifact/vi_buggy_test.uarch | grep "===> v"
-  xdg-open t.smt2.c.trd.png
+  firefox t.smt2.c.trd.png
 fi
 

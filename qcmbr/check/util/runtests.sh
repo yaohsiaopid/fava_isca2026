@@ -2,8 +2,7 @@
 # 1. testdir
 # 2. if augment not exists and need augment, then augment
 # 3. copy the tests to results_new 
-#PIPEBIN=/cafe/u/yaohsiao/docs/coatcheck_dev/src/pipecheck
-PIPEBIN=/cafe/u/yaohsiao/docs/coatcheck_dev/src/Main.native
+PIPEBIN=/usr/local/bin/pipecheck
 echo "---> pipecheck at $PIPEBIN"
 DOTBIN=$(which dot)
 if [[ $(hostname) =~ cafe-jg* ]]; then
@@ -194,7 +193,7 @@ run_single_test() {
   # Use GNU Parallel to execute run_single_test for each test
   # --jobs 0 will run one job per CPU core. You can set it to a specific number, e.g., --jobs 8
   # --bar shows a progress bar
-  parallel --load 95% --jobs 50 --bar --halt now,fail=1 run_single_test ::: $TESTS
+  parallel --load 95% --jobs 1 --bar --halt now,fail=1 run_single_test ::: $TESTS
   # parallel --load 80% --jobs -5 --bar --halt now,fail=1 run_single_test ::: $TESTS
 fi
 
