@@ -7,7 +7,7 @@ cover -name cvr_div_s2_HB_1_cyc_div_s1 { div_s2 ##1 div_s1 }
 cover -name cvr_decode_s1_HB_1_cyc_issue_s8 { decode_s1 ##1 issue_s8 }
 cover -name cvr_decode_s1_HB_1_cyc_scb_0_s8 { decode_s1 ##1 scb_0_s8 }
 cover -name cvr_decode_s1_HB_1_cyc_scb_0_s12 { decode_s1 ##1 scb_0_s12 }
-cover -name cvr_decode_s1_HB_1_cyc_scb_0_s13 { decode_s1 ##1 scb_0_s13 }
+cover -name cvr_decode_s1_HB_1_cyc_scb_0_s13 { _______________________ }
 cover -name cvr_decode_s1_HB_1_cyc_scb_1_s8 { decode_s1 ##1 scb_1_s8 }
 cover -name cvr_decode_s1_HB_1_cyc_scb_1_s12 { decode_s1 ##1 scb_1_s12 }
 cover -name cvr_decode_s1_HB_1_cyc_scb_1_s13 { decode_s1 ##1 scb_1_s13 }

@@ -15,7 +15,7 @@ cover -name cvr_src_decode_s1_dest_set__issue_s8 {decode_s1 ##1 ((issue_s8 &  1'
 cover -name cvr_src_decode_s1_dest_set__issue_s8_scb_3_s8 {decode_s1 ##1 ((issue_s8 & scb_3_s8 &  1'b1 ) & ! (scb_0_s8 | scb_1_s8 | scb_2_s8 | decode_s1 |  1'b0 )) }
 cover -name cvr_src_decode_s1_dest_set__issue_s8_scb_2_s8 {decode_s1 ##1 ((issue_s8 & scb_2_s8 &  1'b1 ) & ! (scb_0_s8 | scb_1_s8 | scb_3_s8 | decode_s1 |  1'b0 )) }
 cover -name cvr_src_decode_s1_dest_set__issue_s8_scb_1_s8 {decode_s1 ##1 ((issue_s8 & scb_1_s8 &  1'b1 ) & ! (scb_0_s8 | scb_2_s8 | scb_3_s8 | decode_s1 |  1'b0 )) }
-cover -name cvr_src_decode_s1_dest_set__issue_s8_scb_0_s8 {decode_s1 ##1 ((issue_s8 & scb_0_s8 &  1'b1 ) & ! (scb_1_s8 | scb_2_s8 | scb_3_s8 | decode_s1 |  1'b0 )) }
+cover -name cvr_src_decode_s1_dest_set__issue_s8_scb_0_s8 {_________ ##1 ((________ & ________ &  1'b1 ) & ! (scb_1_s8 | scb_2_s8 | scb_3_s8 | decode_s1 |  1'b0 )) }
 cover -name cvr_src_issue_s8_dest_set_ {issue_s8 ##1 (( 1'b1 ) & ! (div_s1 | scb_0_s8 | scb_1_s8 | scb_2_s8 | scb_3_s8 |  1'b0 )) }
 cover -name cvr_src_issue_s8_dest_set__scb_3_s8 {issue_s8 ##1 ((scb_3_s8 &  1'b1 ) & ! (div_s1 | scb_0_s8 | scb_1_s8 | scb_2_s8 |  1'b0 )) }
 cover -name cvr_src_issue_s8_dest_set__scb_2_s8 {issue_s8 ##1 ((scb_2_s8 &  1'b1 ) & ! (div_s1 | scb_0_s8 | scb_1_s8 | scb_3_s8 |  1'b0 )) }
