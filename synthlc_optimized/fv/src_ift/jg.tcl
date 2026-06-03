@@ -26,7 +26,7 @@ set_proofgrid_max_jobs 32
 #TASKCREATION
 task -set mytask
 
-set_prove_time_limit 3h
+set_prove_time_limit 2h
 #set_prove_per_property_time_limit 12m
 
 #CUSTOMTCL

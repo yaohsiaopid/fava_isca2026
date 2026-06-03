@@ -156,6 +156,7 @@ def gen():
             i0_constraint += line
 
     for agroup in group_items:
+        htcl_local = copy.deepcopy(htcl_)
         group_id, field, t_instns = agroup
         if field == "" :
             continue
@@ -222,7 +223,7 @@ def gen():
 		
                 in_dest += "1'b1"
                 if added_t0_sigs:
-                    htcl_ += PROP_TMPLT2.format(
+                    htcl_local += PROP_TMPLT2.format(
                         tnm=taint,
                         s=s,
                         d=cnt,
@@ -235,7 +236,7 @@ def gen():
         tcl_file = f"{JOB}_group{group_id}.tcl"
         print(f"Writing TCL: {tcl_file}")
         with open (f"{tcl_file}", "w") as f:
-            f.write(htcl_)
+            f.write(htcl_local)
             #f.write("\nprove -task mytask\n")
             #f.write(f"set props [get_property_list -include {{name {tnm}*}}]\n") 
             #f.write("report -property $props -csv -results -file %s/%s.csv -force\n" % (os.getcwd(), JOB))
@@ -374,7 +375,7 @@ def pp(instr):
             
             # Intrinsic
             if t_instns == instr:
-                JOB="ift_rtl2mupath_" + taint 
+                JOB="ift_intr_rtl2mupath_" + taint 
                 csvf = f"../xIftIntrinsic/{JOB}.csv"
                 if not os.path.exists(csvf):
                     for s, dest_set_list in decisions.items():
@@ -391,7 +392,7 @@ def pp(instr):
                             elif res == "covered":
                                 num_dest_sets_tainted += 1
 
-                        if num_dest_sets_tainted > 2:
+                        if num_dest_sets_tainted > 1:
                             df_map_intr[group_id][taint][s] = 1
 
             else:
@@ -416,7 +417,7 @@ def pp(instr):
                         elif res == "covered":
                             num_dest_sets_tainted += 1
 
-                    if num_dest_sets_tainted > 2:
+                    if num_dest_sets_tainted > 1:
                         df_map_dyn[group_id][taint][s] = 1
 
     with open("leakage_signature.txt", "w") as f:
@@ -443,7 +444,7 @@ def pp(instr):
                 row += str(df_map_intr[group_id]["taint_rs1"][s])
                 row += " "
 
-                row += str(df_map_intr[group_id]["taint_rs1"][s])
+                row += str(df_map_intr[group_id]["taint_rs2"][s])
                 row += " "
 
                 row += str(df_map_dyn[group_id]["taint_rs1"][s])
