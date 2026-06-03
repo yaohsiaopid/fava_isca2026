@@ -1,0 +1,12 @@
+issue_s16,scb_0_s12
+issue_s16,scb_0_s13
+issue_s16,scb_1_s12
+issue_s16,scb_1_s13
+issue_s16,scb_2_s12
+issue_s16,scb_2_s13
+issue_s16,scb_3_s12
+issue_s16,scb_3_s13
+issue_s16,mem_req_s1
+load_unit_op_s1,mem_req_s1
+load_unit_op_s2,mem_req_s1
+mem_req_s1,mem_req_s1
