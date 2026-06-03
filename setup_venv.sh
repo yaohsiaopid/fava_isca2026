@@ -10,3 +10,4 @@ python3 -c "import networkx; import numpy; import matplotlib; import cvc5; impor
 else
   source pyenv/bin/activate
 fi
+echo "set nu" > ~/.vimrc
