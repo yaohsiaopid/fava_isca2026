@@ -51,7 +51,7 @@ Task,Name,Result,Engine,Bound,Time,Note
 "mytask","taint_rs2_src_issue_s16_dest_14","covered","Tri","8","9.606 s",""
 "mytask","taint_rs2_src_issue_s16_dest_18","covered","Tri","10","33.826 s",""
 "mytask","taint_rs2_src_issue_s16_dest_20","covered","Tri","9","18.943 s",""
-"mytask","taint_rs2_src_scb_0_s8_dest_3","covered","Tri","10","24.135 s",""
+"mytask","taint_rs2_src_scb_0_s8_dest_3","covered","Tri","10","24.134 s",""
 "mytask","taint_rs2_src_scb_0_s12_dest_1","covered","Tri","11","25.185 s",""
 "mytask","taint_rs2_src_scb_0_s12_dest_2","covered","Tri","12","53.067 s",""
 "mytask","taint_rs2_src_scb_1_s8_dest_2","covered","Tri","8","12.223 s",""
@@ -67,3 +67,4 @@ Task,Name,Result,Engine,Bound,Time,Note
 "mytask","taint_rs2_src_scb_3_s12_dest_1","covered","Tri","10","14.747 s",""
 "mytask","taint_rs2_src_scb_3_s12_dest_2","covered","Tri","11","28.309 s",""
 "mytask","taint_rs2_src_instn_begin_dest_0","covered","B","5","4.082 s",""
+"mytask","taint_rs2_src_scb_0_s8_dest_2","covered","Ht","11","283.446 s",""

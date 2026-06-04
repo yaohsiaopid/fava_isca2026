@@ -172,3 +172,14 @@ INSTN_CONSTRAINT
 I1_CONSTRAINT
 
 '''
+
+dynamic_younger_template_no_props = '''
+`define T_FROM_I
+`define DYNAMIC
+`define YNG
+OP_TAINT
+INSTN_CONSTRAINT
+
+I1_CONSTRAINT
+
+'''
