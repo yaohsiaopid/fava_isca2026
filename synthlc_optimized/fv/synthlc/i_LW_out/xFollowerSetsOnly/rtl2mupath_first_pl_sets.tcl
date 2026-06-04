@@ -1,0 +1,4 @@
+assume -name {i_LW_0} {i0[14:12] == 3'b010}
+assume -name {i_LW_1} {i0[11:7] != 5'd0}
+assume -name {i_LW_2} {i0[6:0] == 7'b0000011}
+cover -name cvr_src_first__decode_s1 {decode_s1 & !issue_s16 & !lsq_enq_0_s1 & !lsq_enq_1_s1 & !scb_0_s8 & !scb_0_s12 & !scb_0_s13 & !scb_1_s8 & !scb_1_s12 & !scb_1_s13 & !scb_2_s8 & !scb_2_s12 & !scb_2_s13 & !scb_3_s8 & !scb_3_s12 & !scb_3_s13 & !load_unit_s1 & !load_unit_buff_s1 & !load_unit_op_s1 & !load_unit_op_s2 & !load_unit_op_s3 & !mem_req_s1 & 1'b1 & ! (decode_s1_hpn | issue_s16_hpn | lsq_enq_0_s1_hpn | lsq_enq_1_s1_hpn | scb_0_s8_hpn | scb_0_s12_hpn | scb_0_s13_hpn | scb_1_s8_hpn | scb_1_s12_hpn | scb_1_s13_hpn | scb_2_s8_hpn | scb_2_s12_hpn | scb_2_s13_hpn | scb_3_s8_hpn | scb_3_s12_hpn | scb_3_s13_hpn | load_unit_s1_hpn | load_unit_buff_s1_hpn | load_unit_op_s1_hpn | load_unit_op_s2_hpn | load_unit_op_s3_hpn | mem_req_s1_hpn |  1'b0) }
