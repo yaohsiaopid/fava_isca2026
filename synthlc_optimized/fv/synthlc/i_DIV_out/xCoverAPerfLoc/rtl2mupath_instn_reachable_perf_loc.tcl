@@ -7,7 +7,7 @@ cover -name cvr_div_s2 {(@(posedge clk_i) div_s2)}
 cover -name cvr_decode_s1 {(@(posedge clk_i) decode_s1)}
 cover -name cvr_issue_s1 {(@(posedge clk_i) issue_s1)}
 cover -name cvr_issue_s2 {(@(posedge clk_i) issue_s2)}
-cover -name cvr_issue_s8 {(@(posedge clk_i) ________)}
+cover -name cvr_issue_s8 {(@(posedge clk_i) issue_s8)}
 cover -name cvr_issue_s16 {(@(posedge clk_i) issue_s16)}
 cover -name cvr_issue_s32 {(@(posedge clk_i) issue_s32)}
 cover -name cvr_lsq_enq_0_s1 {(@(posedge clk_i) lsq_enq_0_s1)}
