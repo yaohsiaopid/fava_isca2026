@@ -24,4 +24,4 @@ This tutorial covers 4 approaches for verification:
 4. Coherence Verification: QCMBR
 
 
-See slides for more details on the approaches, as well as instructions for the hands-on exercises for this tutorial.
+See slides or https://fava.stanford.edu/ for more details on the approaches, as well as instructions for the hands-on exercises for this tutorial.
