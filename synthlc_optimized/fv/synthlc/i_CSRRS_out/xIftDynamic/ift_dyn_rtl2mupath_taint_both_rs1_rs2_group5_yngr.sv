@@ -1,0 +1,17 @@
+
+`define T_FROM_I
+`define DYNAMIC
+`define YNG
+`define BOTHRS
+`define SYSINSN
+i_CSRRS_0: assume property (i0[14:12] == 3'b010);
+i_CSRRS_2: assume property (i0[6:0] == 7'b1110011);
+
+
+group_5_i1: assume property (
+((i1[14:12] == 3'b000) && (i1[6:0] == 7'b1100011) && 1'b1) ||
+1'b0);
+// BEQ
+
+
+

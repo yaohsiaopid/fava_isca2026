@@ -159,8 +159,7 @@ if [ $confirmed == "y" ]; then
     
     # Taint both operands
     JOB="ift_dyn_rtl2mupath_taint_both_rs1_rs2"
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen ${fileprefix} taint_both_rs1_rs2; cd ../../..
- 
+    
     # Loop over every .sv file found in the directory and run Jasper
     #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
     SVFILES=( $(find $(realpath ${INAME_DIR}/${DIR}) -maxdepth 1 -regex ".*/${JOB}_group[0-9]+_yngr\.sv" | sort) )
@@ -179,10 +178,6 @@ if [ $confirmed == "y" ]; then
 
     # Taint RS1 only
     JOB="ift_dyn_rtl2mupath_taint_rs1"
-    #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
-
-    # Generate SV and TCL for HB properties
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs1; cd ../../..
 
     # Loop over every .sv file found in the directory and run Jasper
     #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
@@ -203,9 +198,6 @@ if [ $confirmed == "y" ]; then
     # Taint RS2 only
     JOB="ift_dyn_rtl2mupath_taint_rs2"
     #TCLFILE=${INAME_DIR}/${DIR}/${JOB}.tcl
-
-    # Generate SV and TCL for HB properties
-    cd ${INAME_DIR}/${DIR}; python3 ${PYSCRPT}.py gen_per_field ${fileprefix} taint_rs2; cd ../../..
 
     # Loop over every .sv file found in the directory and run Jasper
     #SVFILES=( $(realpath ${INAME_DIR}/${DIR})/${JOB}*.sv )
