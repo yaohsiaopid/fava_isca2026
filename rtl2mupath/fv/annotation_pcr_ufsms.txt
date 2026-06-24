@@ -1,11 +1,11 @@
-# (name, iir, state_var1|commit_cond, state_var2|commit_cond,...) 
-# one line per field and each unique tuple is separated by empty lines 
+// (name, iir, state_var1|commit_cond, state_var2|commit_cond,...) 
+// one line per field and each unique tuple is separated by empty lines 
 
-serdiv_unit_divide
-ex_stage_i.i_mult.i_div.pc_q
-ex_stage_i.i_mult.i_div.state_q,0
+serdiv_unit_divide                  // User-defined µFSM name
+ex_stage_i.i_mult.i_div.pc_q        // PCR for serdiv unit
+ex_stage_i.i_mult.i_div.state_q,0   // State variable 1, idle state 0
 
-id_stage
+id_stage // user-define
 ______________________________
 id_stage_i.issue_q.valid,0
 
