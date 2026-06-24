@@ -1,0 +1,353 @@
+StageName 0 "id_stage".
+StageName 1 "issue".
+StageName 2 "scb_issue".
+StageName 3 "mem_req".
+StageName 4 "load_unit_s1".
+StageName 5 "load_unit_buff".
+StageName 6 "load_unit_op_s2".
+StageName 7 "lsq".
+StageName 8 "load_unit_op_s3".
+StageName 9 "load_unit_op_s1".
+StageName 10 "store_unit_s1".
+StageName 11 "scb_comp".
+StageName 12 "stb_spec".
+StageName 13 "scb_commit".
+StageName 14 "stb_com".
+StageName 15 "store_unit_s3".
+StageName 16 "csr_buff".
+
+Axiom "lw":
+  forall microop "i", IsAnyRead i => 
+  (AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, id_stage), (i, (0, mem_req)), "path", "black");
+((i, issue), (i, load_unit_s1), "path", "black");
+((i, scb_issue), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, id_stage), (i, (0, mem_req)), "path", "black");
+((i, issue), (i, load_unit_s1), "path", "black");
+((i, scb_issue), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, id_stage), (i, (0, mem_req)), "path", "black");
+((i, id_stage), (i, load_unit_op_s2), "path", "black");
+((i, issue), (i, load_unit_s1), "path", "black");
+((i, scb_issue), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_op_s2), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, lsq), (i, load_unit_op_s2), "path", "black");
+((i, lsq), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s2), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, issue), (i, load_unit_op_s3), "path", "black");
+((i, scb_issue), (i, load_unit_op_s3), "path", "black");
+((i, load_unit_op_s3), (i, load_unit_op_s1), "path", "black");
+((i, load_unit_op_s3), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s1), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, issue), (i, load_unit_op_s3), "path", "black");
+((i, scb_issue), (i, load_unit_op_s3), "path", "black");
+((i, lsq), (i, load_unit_op_s1), "path", "black");
+((i, lsq), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s3), (i, load_unit_op_s1), "path", "black");
+((i, load_unit_op_s3), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s1), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, lsq), (i, load_unit_op_s2), "path", "black");
+((i, load_unit_op_s2), (i, load_unit_op_s3), "path", "black");
+((i, load_unit_op_s3), (i, load_unit_op_s1), "path", "black");
+((i, load_unit_op_s3), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s1), (i, load_unit_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, issue), (i, load_unit_op_s3), "path", "black");
+((i, scb_issue), (i, load_unit_op_s3), "path", "black");
+((i, load_unit_op_s3), (i, (0, mem_req)), "path", "black");
+((i, lsq), (i, (0, mem_req)), "path", "black");
+((i, load_unit_op_s3), (i, load_unit_op_s1), "path", "black");
+((i, lsq), (i, load_unit_op_s1), "path", "black");
+((i, (0, mem_req)), (i, load_unit_s1), "path", "black");
+((i, load_unit_op_s1), (i, load_unit_s1), "path", "black");
+((i, load_unit_s1), (i, load_unit_buff), "path", "black");
+((i, load_unit_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)).
+
+Axiom "sw":
+  forall microop "i", IsAnyWrite i => 
+  (AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, store_unit_s1), "path", "black");
+((i, scb_issue), (i, store_unit_s1), "path", "black");
+((i, store_unit_s1), (i, stb_spec), "path", "black");
+((i, store_unit_s1), (i, scb_commit), "path", "black");
+((i, scb_commit), (i, stb_com), "path", "black");
+((i, stb_spec), (i, stb_com), "path", "black");
+((i, stb_com), (i, (0, mem_req)), "path", "black")] /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, store_unit_s1), "path", "black");
+((i, scb_issue), (i, store_unit_s1), "path", "black");
+((i, store_unit_s1), (i, stb_spec), "path", "black");
+((i, stb_spec), (i, scb_commit), "path", "black");
+((i, scb_commit), (i, stb_com), "path", "black");
+((i, stb_spec), (i, stb_com), "path", "black");
+((i, scb_commit), (i, (0, mem_req)), "path", "black");
+((i, stb_com), (i, (0, mem_req)), "path", "black")] /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, store_unit_s1), "path", "black");
+((i, scb_issue), (i, store_unit_s1), "path", "black");
+((i, store_unit_s1), (i, stb_spec), "path", "black");
+((i, store_unit_s1), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black");
+((i, stb_spec), (i, scb_commit), "path", "black");
+((i, scb_commit), (i, stb_com), "path", "black");
+((i, stb_spec), (i, stb_com), "path", "black");
+((i, scb_commit), (i, (0, mem_req)), "path", "black");
+((i, stb_spec), (i, (0, mem_req)), "path", "black")] /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, lsq), (i, store_unit_s1), "path", "black");
+((i, store_unit_s1), (i, stb_spec), "path", "black");
+((i, store_unit_s1), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black");
+((i, stb_spec), (i, scb_commit), "path", "black");
+((i, scb_commit), (i, stb_com), "path", "black");
+((i, stb_spec), (i, stb_com), "path", "black");
+((i, scb_commit), (i, (0, mem_req)), "path", "black");
+((i, stb_spec), (i, (0, mem_req)), "path", "black")] /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s3) /\ ~NodeExists(i, csr_buff)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, lsq), "path", "black");
+((i, scb_issue), (i, lsq), "path", "black");
+((i, issue), (i, store_unit_s3), "path", "black");
+((i, scb_issue), (i, store_unit_s3), "path", "black");
+((i, lsq), (i, store_unit_s1), "path", "black");
+((i, store_unit_s3), (i, store_unit_s1), "path", "black");
+((i, store_unit_s1), (i, stb_spec), "path", "black");
+((i, store_unit_s1), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black");
+((i, stb_spec), (i, scb_commit), "path", "black");
+((i, scb_commit), (i, stb_com), "path", "black");
+((i, stb_spec), (i, stb_com), "path", "black");
+((i, scb_commit), (i, (0, mem_req)), "path", "black");
+((i, stb_spec), (i, (0, mem_req)), "path", "black")] /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, csr_buff)).
+
+Axiom "fence":
+  forall microop "i", IsAnyFence i => 
+  (AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, csr_buff), "path", "black");
+((i, scb_issue), (i, csr_buff), "path", "black");
+((i, csr_buff), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, mem_req) /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, scb_comp) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3)) \/ 
+(AddEdges [((i, id_stage), (i, issue), "path", "black");
+((i, id_stage), (i, scb_issue), "path", "black");
+((i, issue), (i, csr_buff), "path", "black");
+((i, scb_issue), (i, csr_buff), "path", "black");
+((i, issue), (i, scb_comp), "path", "black");
+((i, scb_issue), (i, scb_comp), "path", "black");
+((i, scb_comp), (i, scb_commit), "path", "black")] /\ ~NodeExists(i, mem_req) /\ ~NodeExists(i, load_unit_s1) /\ ~NodeExists(i, load_unit_buff) /\ ~NodeExists(i, load_unit_op_s2) /\ ~NodeExists(i, lsq) /\ ~NodeExists(i, load_unit_op_s3) /\ ~NodeExists(i, load_unit_op_s1) /\ ~NodeExists(i, store_unit_s1) /\ ~NodeExists(i, stb_spec) /\ ~NodeExists(i, stb_com) /\ ~NodeExists(i, store_unit_s3)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inter HBI Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% xDataDepMisc/same_addr_s1.sv  
+Axiom "data_dep_1_atomic_mem": 
+forall microops "i1", forall microops "i2", 
+(IsAnyWrite i1 /\ IsAnyRead i2 /\ SameData i1 i2 /\ SamePhysicalAddress i1 i2) => 
+AddEdge ((i1, (0, mem_req)), (i2, (0, mem_req)), "rf", "green").
+
+Axiom "data_dep_2_atomic_mem": 
+forall microops "i1", forall microop "i2",
+(IsAnyRead i1 /\ DataFromInitialStateAtPA i1 /\ 
+IsAnyWrite i2 /\ SamePhysicalAddress i1 i2) => 
+AddEdge ((i1, (0, mem_req)), (i2, (0, mem_req)), "fr", "green").
+
+Axiom "data_dep_2_noninterfere_for_atomic_mem":
+forall microops "i1", forall microops "i2", 
+(IsAnyWrite i1 /\ IsAnyRead i2 /\ SameData i1 i2 /\ SamePhysicalAddress i1 i2) => 
+~(exists microop "j", IsAnyWrite j /\ SamePhysicalAddress j i1 /\
+EdgeExists ((i1, (0, mem_req)), (j, (0, mem_req)), "inter", "magenta") /\ 
+EdgeExists ((j, (0, mem_req)), (i2, (0, mem_req)), "inter", "magenta")).
+
+%%%%%%%%%%%%
+% TODO
+Axiom "atomic_mem":
+forall microops "i1", forall microops "i2", 
+SamePhysicalAddress i1 i2 /\ 
+ProgramOrder i1 i2 =>
+NodeExists (i1, (0, mem_req)) /\ NodeExists (i2, (0, mem_req)) =>
+EdgeExists ((i1, (0, mem_req)), (i2, (0, mem_req)), "inter", "magenta").
+Axiom "coh_fin":
+forall microop "w", forall microop "w'",
+(IsAnyWrite w /\ IsAnyWrite w' /\ 
+SamePhysicalAddress w w' /\  ~SameMicroop w w' /\ DataFromFinalStateAtPA w') =>  
+  AddEdge ((w, (0, mem_req)), (w', (0, mem_req)), "final", "red").
+%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inter HBI Structural (undetermined)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Exiting the STB in order
+% ../fv/xStructural/SW_SW/out/9.sv
+Axiom "SW_SW_mem_req":
+forall microops "i1", forall microops "i2", 
+(IsAnyWrite i1 /\ IsAnyWrite i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, (0, mem_req)), (i2, (0, mem_req)), "inter_undet", "red").
+
+% ../fv/xDataDepMisc/same_addr_dep.{sv,csv}
+Axiom "SW_LW_same_addr":
+forall microops "i1", forall microops "i2", 
+(IsAnyWrite i1 /\ IsAnyRead i2 /\ SamePhysicalAddress i1 i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, (0, mem_req)), (i2, (0, mem_req)), "inter_undet", "red").
+
+% waits for drain, which we is the complete of store, i.e., (0, mem_req)
+% ../fv/xDataDepMisc/sw_fence_2.{sv,csv}
+Axiom "SW_FENCE":
+forall microops "i1", forall microops "i2", 
+(IsAnyWrite i1 /\ IsAnyFence i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, (0, mem_req)), (i2, scb_commit), "inter_undet", "red").
+
+
+% Only when FENCE is at the head of scoreboard does it broadcast to flush the
+% dcache but in the core there is not such guarding in wiating for fence to
+% finish 
+% as in the decoder.sv
+% // Currently implemented as a whole DCache flush boldly ignoring other things      
+
+% ../fv/xDataDepMisc/FENCE_scb_commit_LW_mem_req_COMMITTED_LW.{sv, csv}
+Axiom "FENCE_LW":
+forall microops "i1", forall microops "i2", 
+(IsAnyFence i1 /\ IsAnyRead i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, scb_commit), (i2, (0, mem_req)), "inter_exists", "red").
+
+% ../fv/xStructural/LW_SW/out/6.sv
+Axiom "LW_SW_mem_req":
+forall microops "i1", forall microops "i2", 
+(IsAnyRead i1 /\ IsAnyWrite i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, (0, mem_req)), (i2, (0, mem_req)), "inter_undet", "red").
+
+% ../fv/xStructural/LW_LW/out/9.sv
+Axiom "LW_LW_mem_req":
+forall microops "i1", forall microops "i2", 
+(IsAnyRead i1 /\ IsAnyRead i2 /\ ProgramOrder i1 i2) => 
+EdgeExists ((i1, (0, mem_req)), (i2, (0, mem_req)), "inter_undet", "red").
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Proven Structural Dependencies
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Axiom "LW_issue_LW_issue": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyRead i2) => 
+NodeExists(i1, issue) /\ NodeExists (i2, issue) =>
+AddEdge ((i1, issue), (i2, issue), "PO", "blue").
+Axiom "LW_id_stage_LW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyRead i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "LW_lsq_LW_lsq": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyRead i2) => 
+NodeExists(i1, lsq) /\ NodeExists (i2, lsq) =>
+AddEdge ((i1, lsq), (i2, lsq), "PO", "blue").
+Axiom "LW_issue_SW_issue": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, issue) /\ NodeExists (i2, issue) =>
+AddEdge ((i1, issue), (i2, issue), "PO", "blue").
+Axiom "LW_id_stage_SW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "LW_lsq_SW_lsq": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, lsq) /\ NodeExists (i2, lsq) =>
+AddEdge ((i1, lsq), (i2, lsq), "PO", "blue").
+Axiom "LW_id_stage_FENCE_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyRead i1 /\ IsAnyFence i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "SW_issue_LW_issue": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyRead i2) => 
+NodeExists(i1, issue) /\ NodeExists (i2, issue) =>
+AddEdge ((i1, issue), (i2, issue), "PO", "blue").
+Axiom "SW_id_stage_LW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyRead i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "SW_lsq_LW_lsq": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyRead i2) => 
+NodeExists(i1, lsq) /\ NodeExists (i2, lsq) =>
+AddEdge ((i1, lsq), (i2, lsq), "PO", "blue").
+Axiom "SW_issue_SW_issue": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, issue) /\ NodeExists (i2, issue) =>
+AddEdge ((i1, issue), (i2, issue), "PO", "blue").
+Axiom "SW_id_stage_SW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "SW_lsq_SW_lsq": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, lsq) /\ NodeExists (i2, lsq) =>
+AddEdge ((i1, lsq), (i2, lsq), "PO", "blue").
+Axiom "SW_id_stage_FENCE_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyWrite i1 /\ IsAnyFence i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "FENCE_id_stage_LW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyFence i1 /\ IsAnyRead i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "FENCE_id_stage_SW_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyFence i1 /\ IsAnyWrite i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").
+Axiom "FENCE_issue_FENCE_issue": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyFence i1 /\ IsAnyFence i2) => 
+NodeExists(i1, issue) /\ NodeExists (i2, issue) =>
+AddEdge ((i1, issue), (i2, issue), "PO", "blue").
+Axiom "FENCE_id_stage_FENCE_id_stage": forall microops "i1", forall microops "i2", 
+(OnCore c i1 /\ OnCore c i2 /\ ProgramOrder i1 i2 /\ IsAnyFence i1 /\ IsAnyFence i2) => 
+NodeExists(i1, id_stage) /\ NodeExists (i2, id_stage) =>
+AddEdge ((i1, id_stage), (i2, id_stage), "PO", "blue").

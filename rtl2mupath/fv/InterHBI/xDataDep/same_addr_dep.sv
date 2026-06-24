@@ -136,8 +136,8 @@ i_SW_1: assume property (i0[6:0] == 7'b0100011);
 i1_LW_0: assume property (i1[14:12] == 3'b010);
 i1_LW_1: assume property (i1[11:7] != 5'd0);
 i1_LW_2: assume property (i1[6:0] == 7'b0000011);
-wire e0 = i0_mem_req_s1 ; 
-wire e1 = i1_mem_req_s1 ; 
+wire e0 = i0_mem_req_s1 ;  // Write-PL
+wire e1 = i1_mem_req_s1 ;  // Read-PL
 
 reg e0_hpn;
 always @(posedge clk_i) begin
