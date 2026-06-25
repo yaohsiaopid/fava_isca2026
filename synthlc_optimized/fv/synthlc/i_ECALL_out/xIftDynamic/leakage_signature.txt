@@ -1,0 +1,3 @@
+                       DIV     ADD     LW      SW      BEQ     
+                       N   D   N   D   N   D   N   D   N   D  
+         operand rs1/2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
