@@ -15,3 +15,10 @@ if [ $1 == "view" ]; then
   xdg-open t.smt2.c.trd.png
 fi
 
+if [ $1 == "mcm" ]; then
+mkdir -p results_new
+../../util/runtests_loop.sh -m  ../../../murphi/artifact/vi_test.uarch -p ../../tests/SC_augmented
+column -s, -t < results_new/latest/vi_test.csv
+fi
+
+
