@@ -192,3 +192,5 @@ cover -name cvr_scb_2_s13_CONCUR_scb_3_s13 { scb_2_s13 && scb_3_s13 }
 cover -name cvr_scb_3_s8_CONCUR_scb_3_s12 { scb_3_s8 && scb_3_s12 }
 cover -name cvr_scb_3_s8_CONCUR_scb_3_s13 { scb_3_s8 && scb_3_s13 }
 cover -name cvr_scb_3_s12_CONCUR_scb_3_s13 { scb_3_s12 && scb_3_s13 }
+
+task -create mytask -copy_assumes -copy {cvr_decode_s1_HB_1_cyc_issue_s8 cvr_decode_s1_HB_1_cyc_scb_0_s8 cvr_decode_s1_HB_1_cyc_scb_0_s12 cvr_decode_s1_HB_1_cyc_scb_0_s13 cvr_decode_s1_HB_1_cyc_decode_s1 cvr_decode_s1_CONCUR_issue_s8 cvr_issue_s8_CONCUR_scb_0_s8 cvr_issue_s8_CONCUR_scb_0_s12 cvr_issue_s8_CONCUR_scb_0_s13}

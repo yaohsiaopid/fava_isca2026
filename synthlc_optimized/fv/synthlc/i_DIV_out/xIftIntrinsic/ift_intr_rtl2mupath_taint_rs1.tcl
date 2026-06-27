@@ -22,3 +22,5 @@ cover -name {taint_rs1_src_scb_3_s8_dest_2} {@(posedge clk_i) scb_3_s8 ##1 ( scb
 cover -name {taint_rs1_src_scb_3_s8_dest_3} {@(posedge clk_i) scb_3_s8 ##1 ( !scb_3_s13 && !scb_3_s8 && scb_3_s12 && 1'b1 && (|{scb_3_s12_t0, 1'b0}))}
 cover -name {taint_rs1_src_scb_3_s12_dest_1} {@(posedge clk_i) scb_3_s12 ##1 ( scb_3_s12 && !scb_3_s13 && 1'b1 && (|{scb_3_s12_t0, 1'b0}))}
 cover -name {taint_rs1_src_scb_3_s12_dest_2} {@(posedge clk_i) scb_3_s12 ##1 ( !scb_3_s12 && scb_3_s13 && 1'b1 && (|{scb_3_s13_t0, 1'b0}))}
+
+task -create mytask -copy_assumes -copy {taint_rs1_src_div_s1_dest_0 taint_rs1_src_div_s1_dest_1 taint_rs1_src_div_s1_dest_2}

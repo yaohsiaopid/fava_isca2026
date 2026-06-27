@@ -47,7 +47,7 @@ if {$FPV == 1} {
     # assume -disable {.*ASSUME_R_W} -regexp
 
     #TASKCREATION
-    task -set mytask
+    #task -set mytask
 
     if { $CUSTOMTCL == 1 } {
         puts "=========CUSTOMTCL========="
@@ -57,7 +57,9 @@ if {$FPV == 1} {
         puts "=========EXIT CUSTOMTCL========="
         exit
         
-    } 
+    }
+
+    task -set mytask 
     
     puts "=============================================================="
     puts "CHECK ASSUMPTION...."
@@ -97,7 +99,7 @@ if {$FPV == 1} {
     
     puts "END"
     report -task mytask -csv -results -file "CSVNAME.csv" -force
-    save "CSVNAME.db" -clean -include {app_data session_data elaborated_design} -force
+    #save "CSVNAME.db" -clean -include {app_data session_data elaborated_design} -force
     exit
 }
 

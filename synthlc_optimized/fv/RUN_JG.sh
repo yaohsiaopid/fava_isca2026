@@ -173,7 +173,7 @@ echo "[RUN_JG] TCLF is $TCLF"
 LISTS=$(grep "^[a-zA-Z].*: assert" $SVA | awk '{ print "-copy {.*" $1 ".*} " }' | sed -e "s/://g" |  tr -d '\n')
 
 CLISTS=$(grep "^[a-zA-Z].*: cover" $SVA | awk '{ print "-copy {.*" $1 ".*} " }' | sed -e "s/://g" |  tr -d '\n')
-CMDTASK="task -create mytask -copy_assumes $LISTS $CLISTS -regexp"
+CMDTASK="#task -create mytask -copy_assumes $LISTS $CLISTS -regexp"
 #-copy_asserts -copy_covers " 
 
 
