@@ -1,0 +1,184 @@
+import re
+import networkx as nx
+from itertools import chain, combinations
+import pandas as pd
+import numpy as np
+import os
+import pandas as pd
+import sys
+sys.path.append("../../src")
+from util import *
+from HB_template import *
+
+
+HEADERFILE='../header.sv'
+with open(HEADERFILE, "r") as f:
+    lines = f.readlines()
+h_ = "".join(lines)
+e_ = ""
+
+
+HEADERTCL='../header.tcl'
+htcl_ = ""
+with open(HEADERTCL, "r") as f:
+    for line in f:
+        htcl_ += line
+
+
+cv_perflocs = get_array("../xCoverAPerfLoc/cover_individual.txt")
+
+edge = get_array("../../xGenPerfLocDfg/dfg_e.txt")
+
+print("edges: ", len(edge))
+print("cv_perflocs: ", len(cv_perflocs))
+
+
+for itm in cv_perflocs:
+    h_ += hpn_reg_t2.format(s1=itm)
+
+JOB="rtl2mupath_candidate_HB"
+
+A_HB_1_CYCLE_B_t_tcl = '''cover -name cvr_{s1}_HB_1_cyc_{s2} {{ {prefix}{s1} ##1 {prefix}{s2} }}\n'''
+A_CONCUR_B_t_tcl = '''cover -name cvr_{s1}_CONCUR_{s2} {{ {prefix}{s1} && {prefix}{s2} }}\n'''
+
+def gen():
+    global htcl_
+    tcl_out = f"{JOB}.tcl"
+
+    for idx, e in enumerate(edge):
+        add_edge = False
+        e0 = e[0]
+        e1 = e[1]
+ 
+        if e0 in cv_perflocs and e1 in cv_perflocs and e0 != e1:
+           add_edge = True
+        
+        if add_edge: 
+            htcl_ += A_HB_1_CYCLE_B_t_tcl.format(s1 = e0, s2 = e1, prefix=prefix)
+        else:
+            print("did not add edge: ", e)
+
+
+    for pl in cv_perflocs:
+        htcl_ += A_HB_1_CYCLE_B_t_tcl.format(s1 = pl, s2 = pl, prefix=prefix)
+
+    for pl1, pl2 in combinations(cv_perflocs, 2):
+        htcl_ += A_CONCUR_B_t_tcl.format(s1 = pl1, s2 = pl2, prefix=prefix)
+ 
+    with open (tcl_out, "w") as f:
+        f.write(htcl_)
+        #f.write("set_prove_time_limit 3h\nset_prove_per_property_time_limit 30m")
+        #f.write("set props [get_property_list -include {name cvr_*}]\n")
+        #f.write("prove -property $props\n")
+        #f.write("report -property $props -csv -results -file %s.csv -force\n" % JOB)
+        #f.write("save %s.db -force\n" % JOB)
+        #f.write("file copy -force %s.csv %s/.\n" % (JOB, os.getcwd()))
+        #f.write("exit\n")
+    with open (f"{JOB}.sv", "w") as f:
+        f.write(h_)
+        f.write(e_)
+
+    return
+
+def pp():
+    reachable_nodes = get_array("../xCoverAPerfLoc/cover_individual.txt")
+    covered_hb = []
+    unreachable_hb = []
+    undetermined_hb = []
+
+    for idx, e in enumerate(edge):
+        add_edge = False
+        e0 = e[0]
+        e1 = e[1]
+
+        if e0 in cv_perflocs and e1 in cv_perflocs and e0 != e1:
+           add_edge = True
+        
+        if not add_edge:
+            continue
+        
+        TMPLT="cvr_{s1}_HB_1_cyc_{s2}"
+        TMPLT2="cvr_{s1}_CONCUR_{s2}"
+        r_, t_, b_ = get_result(f"{JOB}.csv", TMPLT.format(s1=e0, s2=e1)) #"ariane.HB_%d" % idx)
+        if r_ == "ERR":
+            print("FAIL HB %s" % e)
+        if r_ == "covered":
+            covered_hb.append(e)
+        elif r_ == "unreachable" or r_=="bounded_unreachable_user":
+            unreachable_hb.append(e)
+        elif r_ == "undetermined":
+            undetermined_hb.append(e)
+            print("undetermined HB: ", e)
+
+    for pl in cv_perflocs:
+        e = (pl, pl)
+        TMPLT="cvr_{s1}_HB_1_cyc_{s2}"
+        r_, t_, b_ = get_result(f"{JOB}.csv", TMPLT.format(s1=pl, s2=pl)) #"ariane.HB_%d" % idx)
+        if r_ == "ERR":
+            print("FAIL HB %s" % e)
+        if r_ == "covered":
+            covered_hb.append(e)
+        elif r_ == "unreachable" or r_=="bounded_unreachable_user":
+            unreachable_hb.append(e)
+        elif r_ == "undetermined":
+            undetermined_hb.append(e)
+            print("undetermined HB: ", e)
+
+    covered_concur = []
+    unreachable_concur = []
+    undetermined_concur = []
+
+    for pl1, pl2 in combinations(cv_perflocs, 2):
+        r2_, t2_, b2_ = get_result(f"{JOB}.csv", TMPLT2.format(s1=pl1, s2=pl2))
+        
+        p = (pl1, pl2)
+
+        if r2_ == "ERR":
+            print("FAIL CONCUR %s" % p)
+        if r2_ == "covered":
+            covered_concur.append(p)
+        elif r2_ == "unreachable" or r2_=="bounded_unreachable_user":
+            unreachable_concur.append(p)
+        elif r2_ == "undetermined":
+            undetermined_concur.append(p)
+            print("undetermined CONCUR: ",p)
+
+
+    with open("hb_covered.txt", "w") as f:
+        for e in covered_hb:
+            f.write(",".join(e) + "\n")
+    
+    with open("hb_unreachable.txt", "w") as f:
+        for e in unreachable_hb:
+            f.write(",".join(e) + "\n")
+
+    with open("hb_undetermined.txt", "w") as f:
+        for e in undetermined_hb:
+            f.write(",".join(e) + "\n")
+
+
+    with open("concur_covered.txt", "w") as f:
+        for e in covered_concur:
+            f.write(",".join(e) + "\n")
+    
+    with open("concur_unreachable.txt", "w") as f:
+        for e in unreachable_concur:
+            f.write(",".join(e) + "\n")
+
+    with open("concur_undetermined.txt", "w") as f:
+        for e in undetermined_concur:
+            f.write(",".join(e) + "\n")
+
+    return
+
+
+if len(sys.argv) != 2:
+    print("gen/pp")
+    exit(0)
+
+opt = sys.argv[1]
+if opt == "gen":
+    gen()
+elif opt == "pp":
+    pp()
+
